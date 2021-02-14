@@ -3,7 +3,15 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const helmet = require("helmet");
+// const rateLimit = require("express-rate-limit");
 // set up express
+
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100 // limit each IP to 100 requests per windowMs
+// });
+
+// app.use(limiter);
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
@@ -39,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 // set up routes
-app.use("/api/products", require("./routes/productRouter"));
+app.use("/api/products", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
 
 app.get("*", function (req, res) {
