@@ -31,9 +31,9 @@ export default function ModuleHeader({moduleName}) {
                 <Navbar.Toggle />
                 
                 <Navbar.Collapse className="justify-content-end">
-                <Nav className="mr-auto">
-                    <Nav.Link href="/posting" ><FaGem /> Post products</Nav.Link>
-                </Nav>
+                {/* <Nav className="mr-auto">
+                    <Nav.Link href="/settings" ><FaGem /> Robot Settings</Nav.Link>
+                </Nav> */}
                     <Navbar.Text className="navText">
                         Current time: {curTime}
                     </Navbar.Text>

@@ -9,7 +9,8 @@ import {
   SidebarContent,
 } from 'react-pro-sidebar';
 import { Link, useHistory } from "react-router-dom";
-
+import Logo from '../../assets/logo.png';
+import Image from 'react-bootstrap/Image';
 import { FaTachometerAlt, FaGem, FaSignOutAlt } from 'react-icons/fa';
 import sidebarBg from '../../assets/bg1.jpg';
 import UserContext from "../../../context/UserContext";
@@ -49,7 +50,7 @@ const Aside = ({ collapsed, toggled, handleToggleSidebar }) => {
               whiteSpace: 'nowrap',
             }}
           >
-            Main Menu
+          <Image src={Logo} className="logo "/>  
         </div>
         </SidebarHeader>
 
@@ -69,8 +70,8 @@ const Aside = ({ collapsed, toggled, handleToggleSidebar }) => {
 
             <MenuItem
               icon={<FaGem />}>
-              <Link className="nav-link" to={`/posting`}>
-                Posting Module
+              <Link className="nav-link" to={`/settings`}>
+                Settings
               </Link>
             </MenuItem>
 

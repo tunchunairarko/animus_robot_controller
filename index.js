@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 // set up routes
-app.use("/api/products", require("./routes/robotRouter"));
+app.use("/api/feed", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
 
 app.get("*", function (req, res) {

@@ -110,9 +110,9 @@ export default function App() {
                     {!userData.user ? <Header /> : <div></div>}
                     <Switch>
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
-                        <PublicRoute restricted={true} component={Register} path="/login" exact />
+                        <PublicRoute restricted={true} component={Register} path="/register" exact />
                         <PrivateRoute component={Admin} path="/dashboard" exact />
-                        <PrivateRoute component={Admin} path="/posting" exact />
+                        <PrivateRoute component={Admin} path="/settings" exact />
                         <PublicRoute restricted={true} component={Admin} path="/" exact />
                         
                     </Switch>

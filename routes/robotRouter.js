@@ -20,40 +20,30 @@ function dumpError(err) {
     }
   }
 
-router.get("/robotdata",auth,async(req,res)=>{
+router.get("/robotdata", auth, async(req,res)=>{
     try {
-        let options = {
-            mode: 'json',
-            pythonPath: process.env.PYTHON_PATH,
-            pythonOptions: ['-u'], // get print results in real-time 
-            scriptPath: path.join(__dirname, '../python'), //If you are having python_test.py script in same folder, then it's optional. 
-            args: [query, queryType, marketplaceString] //An argument which can be accessed in the script using sys.argv[1] 
-        };
-        PythonShell.run('apiController.py', options, function (err, result) {
-            if (err) throw err;
-            console.log('result: ', result); 
-            res.send(result[0])
-        });
+      let toggleState = 1; 
+      // console.log(toggleState)
+      let options = {
+          mode: 'json',
+          pythonPath: process.env.PYTHON_PATH,
+          pythonOptions: ['-u'], // get print results in real-time 
+          scriptPath: path.join(__dirname, '../python'), //If you are having python_test.py script in same folder, then it's optional. 
+          args: [toggleState] //An argument which can be accessed in the script using sys.argv[1] 
+      };
+      let pyshell = new PythonShell('animus_datafeed.py',options)
+      pyshell.on(toggleState,function(message){
+        console.log(message)
+      })
+      // PythonShell.on('animus_datafeed.py', options, function (err, result) {
+      //     if (err) throw err;
+      //     console.log('result: ', result); 
+      //     res.send(result)
+      // });
     } catch (err) {
         dumpError(err)
         res.status(500).json({ error: err.message });
     }
-})
-
-router.post("/dashboarddata", auth, async (req, res) =>{
-    const { username } = req.body;
-    // console.log(username)
-    const userPostedProductsCount = await UserProducts.countDocuments({username:username})
-    const totPostedProductsCount = await Products.countDocuments({})
-
-    const resData = await UserProducts.aggregate([
-        {$group :{_id:"$username","count":{$sum:1}}},
-        {$sort:{"count":-1}},
-        {$limit : 5}]
-    )
-    const bestPoster = resData[0]._id
-    const bestPosterCount=resData[0].count
-    res.json({userPostedProductsCount,totPostedProductsCount,bestPoster,bestPosterCount})
 })
 
 

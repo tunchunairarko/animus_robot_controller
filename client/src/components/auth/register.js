@@ -65,7 +65,7 @@ export default function Register() {
             <Container className="p-3 register-form">
                 <Jumbotron className="shadow-sm rounded">
                     <h1 as={Row} style={{display: 'flex', justifyContent: 'center'}}>
-                        Create Account
+                    HWU Telepresence Hub - Register
                     </h1>
                     <Form onSubmit={submit}>
                         <Form.Row>
