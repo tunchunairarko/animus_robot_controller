@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 import Axios from "axios";
-import { CardDeck, Row, Col, ToggleButton } from 'react-bootstrap'
+import { CardDeck, Row, Col, Button, ResponsiveEmbed, ButtonGroup, ToggleButton } from 'react-bootstrap'
 import "../../../components/assets/style.css";
 import { FaClock, FaUndo, FaPowerOff } from 'react-icons/fa';
 import ModuleHeader from "../ModuleHeader/ModuleHeader";
@@ -40,8 +40,8 @@ export default function Dashboard() {
             }
         }
         checkValidation();
-    },[validation]);
-        
+    }, [validation]);
+
 
     useEffect(() => {
         const getData = async (e) => {
@@ -73,7 +73,7 @@ export default function Dashboard() {
 
                         } catch (error) {
                             console.log(error)
-    
+
                         }
                     }
                 }
@@ -97,14 +97,29 @@ export default function Dashboard() {
                 <DashCard title={"Total upload"} value={totalUpload} image={Total} />
                 <DashCard title={"Best uploader"} value={bestUploader} image={Best} />
             </CardDeck> */}
-            <ToggleButton
-            type="checkbox"
-            variant="light"
-            checked={toggleState}
-            value="0"
-            onChange={(e) => setToggleState(e.currentTarget.checked)}>
-                DA
-            </ToggleButton>
+
+            <center>
+                <ButtonGroup toggle className="mb-2">
+                    <ToggleButton
+                        type="checkbox"
+                        variant="info"
+                        style={{ 'font-size': '3em' }}
+                        checked={toggleState}
+                        value="1"
+                        onChange={(e) => setToggleState(e.currentTarget.checked)}
+                    >
+                        <FaPowerOff />
+                    </ToggleButton>
+                </ButtonGroup>
+                
+                <div style={{ width: 660, height: 'auto', border: 'solid 3px #bbb', borderRadius: '5px' }}>
+                    <ResponsiveEmbed aspectRatio="16by9">
+                        <embed type="image/svg+xml" src="https://react-bootstrap.github.io/TheresaKnott_castle.svg" />
+                    </ResponsiveEmbed>
+                </div>
+            </center>
+
+
         </Fragment>
     )
 }
