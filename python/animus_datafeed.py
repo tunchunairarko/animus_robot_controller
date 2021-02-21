@@ -2,17 +2,144 @@ import random
 import time
 import sys
 import json
+import animus_client as animus
+import animus_utils as utils
+import sys
+import logging
+import numpy as np
+import random
+import cv2
+import time
+import socketio
+import base64
 
 
+sio = socketio.Client()
+
+myrobot=None
+
+@sio.event
+def connect():
+    print('connected to server')
+
+
+@sio.event
+def disconnect():
+    print('disconnected from server')
+
+@sio.on('frontenddata')
+def frontenddata(data):
+    key=data['key']
+    value=data['value']
+
+    motorDict = utils.get_motor_dict()
+    list_of_motions = [motorDict.copy()]
+    motorDict[key]=value
+    list_of_motions.append(motorDict.copy())
+    for motion_counter in len(range(list_of_motions)):
+        ret = myrobot.set_modality("motor", list(list_of_motions[motion_counter].values()))
+
+
+def gen_frames(camera):  # generate frame by frame from camera
+    while True:
+        # Capture frame-by-frame
+        success, frame = camera.read()  # read the camera frame
+        if not success:
+            break
+        else:
+            ret, buffer = cv2.imencode('.jpg', frame)
+            frame = buffer.tobytes()
+            return (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')  # concat frame one by one and show result
 def main():
-    toggleState=sys.argv[0]
-    while(1):
-        ra=random.randint(0,100)
-        data={
-            'val':ra
-        }
-        print(ra)
-        time.sleep(0.05)
+    toggleState=sys.argv[1]
+    email = sys.argv[2]
+    password = sys.argv[3]
+    stopFlag = False
+    # print(password)
+    if(toggleState==1 or toggleState=='1'):
+        print('success')
+        sio.connect('http://localhost:5000')
+        
+        # if(sio.id is not None):
+        cam = cv2.VideoCapture(0)
+        
+        while (True):
+            ret, frame = cam.read()                     # get frame from webcam
+            encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), 60]
+            res, frame = cv2.imencode('.jpg', frame)    # from image to binary buffer
+            data = base64.b64encode(frame)              # convert to base64 format
+            sio.emit('pythondata', data)                      # send to server
+            # data=gen_frames(cam)
+            # # print(data)
+            # sio.emit('pythondata', data)
+        
+        
+        
+        
+        # log = utils.create_logger("MyAnimusApp", logging.INFO)
+        # log.info(animus.version())
+        
+        # audio_params = utils.AudioParams(
+        #             Backends=["notinternal"],
+        #             SampleRate=16000,
+        #             Channels=1,
+        #             SizeInFrames=True,
+        #             TransmitRate=30
+        #         )
+
+        # setup_result = animus.setup(audio_params, "PythonAnimusBasics", True)
+        # if not setup_result.success:
+        #     sys.exit(-1)
+
+        # login_result = animus.login_user("ms414@hw.ac.uk", "C3):]RR[Rs$Y", True)
+        # if login_result.success:
+        #     log.info("Logged in")
+        # else:
+        #     sys.exit(-1)
+
+        # get_robots_result = animus.get_robots(True, True, True)
+        
+        # if not get_robots_result.localSearchError.success:
+        #     log.error(get_robots_result.localSearchError.description)
+
+        # if not get_robots_result.remoteSearchError.success:
+        #     log.error(get_robots_result.remoteSearchError.description)
+
+        # if len(get_robots_result.robots) == 0:
+        #     log.info("No Robots found")
+        #     print("No Robots found")
+        #     animus.close_client_interface()
+        #     sys.exit(-1)
+
+        # chosen_robot_details = get_robots_result.robots[0]
+
+        # myrobot = animus.Robot(chosen_robot_details)
+        # connected_result = myrobot.connect()
+        # if not connected_result.success:
+        #     print("Could not connect with robot {}".format(myrobot.robot_details.robot_id))
+        #     animus.close_client_interface()
+        #     sys.exit(-1)
+
+        # open_success = myrobot.open_modality("vision")
+        # if not open_success:
+        #     log.error("Could not open robot vision modality")
+        #     sys.exit(-1)
+
+        # open_success = myrobot.open_modality("motor")
+        # if not open_success:
+        #     log.error("Could not open robot motor modality")
+        #     sys.exit(-1)
+
+        # sio.connect('http://localhost:5000')
+        # sio.wait()
+    # while(1):
+    #     ra=random.randint(0,100)
+    #     data={
+    #         'val':ra
+    #     }
+    #     print(ra)
+    #     time.sleep(0.05)
 
 
 if __name__=='__main__':

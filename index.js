@@ -3,15 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 const helmet = require("helmet");
-// const rateLimit = require("express-rate-limit");
-// set up express
-
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100 // limit each IP to 100 requests per windowMs
-// });
-
-// app.use(limiter);
+const socketio = require("socket.io")
+const request = require('request');
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
@@ -50,14 +43,53 @@ app.use((req, res, next) => {
 app.use("/api/feed", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
 
+
+
+
+
 app.get("*", function (req, res) {
   res.sendFile('index.html', { root });
 })
 
 app.use(helmet());
 
-app.listen(PORT, () => console.log(`The server has started on port: ${PORT}`));
+const server = app.listen(PORT, () => console.log(`The server has started on port: ${PORT}`));
+const io = socketio(server,{cors:{origin: '*',}})
+
+let interval;
+
+io.on("connection", (socket) => {
+  console.log("New client connected");
+
+  socket.on("pythondata",function(frame){
+    // console.log(data)
+    var buff = Buffer.from(frame).toString()
+    let base64data = buff.toString('base64');
+    
+    // var ret = Object.assign({}, data, {
+    //   frame: Buffer.from(data.frame, 'base64').toString() // from buffer to base64 string
+    // })
+    socket.broadcast.emit("FROMPYAPI",base64data)
+    // io.Broad.emit("FROMPYAPI",frame)
+    // setInterval(function(){
+    //   //console.log(frame)
+    //   io.emit("FROMPYAPI",frame)
+    // },100 )
+  })
+  
+
+  socket.on("frontenddata",function(data){
+    var ret = Object.assign({}, data, {
+      key:data.key
+    })
+    socket.emit("FROMNODEAPI",ret)
+  })
+
+});
 
 
-
-
+const getApiAndEmit = socket => {
+  const response = new Date();
+  // Emitting a new message. Will be consumed by the client
+  socket.emit("FromAPI", response);
+};

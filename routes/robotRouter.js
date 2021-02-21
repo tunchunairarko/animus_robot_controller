@@ -2,9 +2,6 @@ const router = require("express").Router();
 const auth = require("../middleware/auth");
 const { PythonShell } = require('python-shell');
 const path = require('path');
-
-
-
 function dumpError(err) {
     if (typeof err === 'object') {
       if (err.message) {
@@ -20,21 +17,30 @@ function dumpError(err) {
     }
   }
 
-router.get("/robotdata", auth, async(req,res)=>{
+router.post("/robotdata", auth, async(req,res)=>{
     try {
-      let toggleState = 1; 
-      // console.log(toggleState)
+
+      let { toggleState, email, password } = req.body;
+      
+      if(toggleState==true){
+        toggleState=1
+      }
+      else{
+        toggleState=0
+      }
+      // console.log(toggleState + email + password)
       let options = {
-          mode: 'json',
+          mode: 'text',
           pythonPath: process.env.PYTHON_PATH,
           pythonOptions: ['-u'], // get print results in real-time 
           scriptPath: path.join(__dirname, '../python'), //If you are having python_test.py script in same folder, then it's optional. 
-          args: [toggleState] //An argument which can be accessed in the script using sys.argv[1] 
+          args: [toggleState, email, password] //An argument which can be accessed in the script using sys.argv[1] 
       };
-      let pyshell = new PythonShell('animus_datafeed.py',options)
-      pyshell.on(toggleState,function(message){
-        console.log(message)
-      })
+      PythonShell.run('animus_datafeed.py', options, function (err, result) {
+        if (err) throw err;
+        console.log('result: ', result); 
+        res.send(result)
+    });
       // PythonShell.on('animus_datafeed.py', options, function (err, result) {
       //     if (err) throw err;
       //     console.log('result: ', result); 
