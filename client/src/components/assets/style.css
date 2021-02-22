@@ -195,3 +195,10 @@ body{
   .power-button{
       margin: 10px 0px;
   }
+
+  .nipple .front{
+      background-color: #341f97!important;
+  }
+  .nipple .back{
+    background-color: rgba(95, 39, 205,0.4)!important;
+}

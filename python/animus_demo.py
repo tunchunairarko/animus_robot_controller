@@ -100,14 +100,14 @@ counter = 0
 motion_counter = 0
 
 
-# cv2.namedWindow("RobotView")
-sio.connect('http://localhost:5000')
+cv2.namedWindow("RobotView")
+# sio.connect('http://localhost:5000')
 try:
     while True:
         image_list, err = myrobot.get_modality("vision", True)
         if err.success:
-            sio.emit('pythondata', str(image_list[0].image))                      # send to server
-            # cv2.imshow("RobotView", image_list[0].image)
+            # sio.emit('pythondata', str(image_list[0].image))                      # send to server
+            cv2.imshow("RobotView", image_list[0].image)
             j = cv2.waitKey(1)
             if j == 27:
                 break

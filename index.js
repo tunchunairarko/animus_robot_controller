@@ -79,10 +79,12 @@ io.on("connection", (socket) => {
   
 
   socket.on("frontenddata",function(data){
-    var ret = Object.assign({}, data, {
-      key:data.key
-    })
-    socket.emit("FROMNODEAPI",ret)
+    console.log(data)
+    // var ret = Object.assign({}, data, {
+    //   data:'2'
+    // })
+    // console.log(ret)
+    socket.broadcast.emit("FROMNODEAPI",data)
   })
 
 });

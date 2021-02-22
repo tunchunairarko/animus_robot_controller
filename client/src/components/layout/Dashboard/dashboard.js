@@ -10,6 +10,7 @@ import UserContext from "../../../context/UserContext";
 import ReactNipple from 'react-nipple';
 import 'react-nipple/lib/styles.css';
 
+const socket = socketIOClient();
 
 export default function Dashboard() {
     // const [userUpload,setUserUpload]=useState("-");
@@ -21,23 +22,25 @@ export default function Dashboard() {
     const [toggleState, setToggleState] = useState(false)
     const [embedSource, setEmbedSource] = useState("https://react-bootstrap.github.io/TheresaKnott_castle.svg");
 
+    
+
     useEffect(()=>{
         const startRobot = async(e) =>{
             if(toggleState){
                 const body={email:tempEmail,password:tempPassword}
                 const response = await Axios.post(
-                    "http://hwutelepresence.robot:6475/",
+                    "http://127.0.0.1:6475/",
                     body,
                     {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
                 );
                 
                 if(response.status==200){
                     Axios.get(
-                        "http://hwutelepresence.robot:6475/start",
+                        "http://127.0.0.1:6475/start",
                         null,
                         {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
                     ).then(function(response){
-                        setEmbedSource("http://hwutelepresence.robot:6475/video_feed")
+                        setEmbedSource("http://127.0.0.1:6475/video_feed")
                     })
                     
                 }
@@ -120,6 +123,15 @@ export default function Dashboard() {
         getData();
     }, [toggleState]);
 
+    const handleHeadMovement = (data) =>{
+        try{
+            const direction=data['direction']['angle'];
+            socket.emit("frontenddata",direction)
+        }catch(err){
+            console.log(err)
+        }
+    }
+
     return (
         <Fragment>
             <ModuleHeader moduleName={"Dashboard"} />
@@ -151,7 +163,7 @@ export default function Dashboard() {
                 
                 <div style={{ width: 660, height: 'auto', border: 'solid 3px #bbb', borderRadius: '5px' }}>
                     <ResponsiveEmbed aspectRatio="16by9">
-                        <embed type="image/svg+xml" src={embedSource} />
+                        <embed type="image/svg+xml" src="http://127.0.0.1:6475/video_feed" />
                     </ResponsiveEmbed>
                 </div>
                 <ReactNipple
@@ -159,17 +171,15 @@ export default function Dashboard() {
                     // see https://github.com/yoannmoinet/nipplejs#options
                     options={{ mode: 'static', position: { top: '50%', left: '50%' } }}
                     // any unknown props will be passed to the container element, e.g. 'title', 'style' etc
+                    className="joystick"
                     style={{
-                        outline: '1px dashed red',
-                        width: 150,
-                        height: 150,
-                        color: 'blue',
-                        background: 'green'
+                        width: 200,
+                        height: 200,
                         // if you pass position: 'relative', you don't need to import the stylesheet
                     }}
                     // all events supported by nipplejs are available as callbacks
                     // see https://github.com/yoannmoinet/nipplejs#start
-                    onMove={(evt, data) => console.log(evt, data)}
+                    onMove={(evt, data) => handleHeadMovement(data)}
                 />
             </center>
 
