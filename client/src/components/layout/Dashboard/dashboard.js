@@ -20,43 +20,43 @@ export default function Dashboard() {
     const [cookies] = useCookies(["user"]);
     const [validation, setValidator] = useState("");
     const [toggleState, setToggleState] = useState(false)
-    const [embedSource, setEmbedSource] = useState("https://react-bootstrap.github.io/TheresaKnott_castle.svg");
+    const [embedSource, setEmbedSource] = useState("https://robotapi.isensetune.com/video_feed");
 
     
 
-    useEffect(()=>{
-        const startRobot = async(e) =>{
-            if(toggleState){
-                const body={email:tempEmail,password:tempPassword}
-                const response = await Axios.post(
-                    "http://127.0.0.1:6475/",
-                    body,
-                    {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
-                );
+    // useEffect(()=>{
+    //     const startRobot = async(e) =>{
+    //         if(toggleState){
+    //             const body={email:tempEmail,password:tempPassword}
+    //             const response = await Axios.post(
+    //                 "http://127.0.0.1:6475/",
+    //                 body,
+    //                 {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
+    //             );
                 
-                if(response.status==200){
-                    Axios.get(
-                        "http://127.0.0.1:6475/start",
-                        null,
-                        {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
-                    ).then(function(response){
-                        setEmbedSource("http://127.0.0.1:6475/video_feed")
-                    })
+    //             if(response.status==200){
+    //                 Axios.get(
+    //                     "http://127.0.0.1:6475/start",
+    //                     null,
+    //                     {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
+    //                 ).then(function(response){
+    //                     setEmbedSource("http://127.0.0.1:6475/video_feed")
+    //                 })
                     
-                }
-                //setEmbedSource("http://hwutelepresence.robot:6475/video_feed")
-            }
-            else{
-                // const response = await Axios.get(
-                //     "http://hwutelepresence.robot:6475/stop",
-                //     null,
-                //     {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
-                // );
-                setEmbedSource("https://react-bootstrap.github.io/TheresaKnott_castle.svg")
-            }
-        }
-        startRobot()
-    },[toggleState])
+    //             }
+    //             //setEmbedSource("http://hwutelepresence.robot:6475/video_feed")
+    //         }
+    //         else{
+    //             // const response = await Axios.get(
+    //             //     "http://hwutelepresence.robot:6475/stop",
+    //             //     null,
+    //             //     {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
+    //             // );
+    //             setEmbedSource("https://react-bootstrap.github.io/TheresaKnott_castle.svg")
+    //         }
+    //     }
+    //     startRobot()
+    // },[toggleState])
 
 
     useEffect(() => {
@@ -152,7 +152,8 @@ export default function Dashboard() {
                     <ToggleButton
                         type="checkbox"
                         variant="info"
-                        style={{ fontSize: '3em' }}
+                        
+                        style={{ display:'none', fontSize: '3em' }}
                         checked={toggleState}
                         value="1"
                         onChange={(e) => setToggleState(e.currentTarget.checked)}
@@ -163,7 +164,7 @@ export default function Dashboard() {
                 
                 <div style={{ width: 660, height: 'auto', border: 'solid 3px #bbb', borderRadius: '5px' }}>
                     <ResponsiveEmbed aspectRatio="16by9">
-                        <embed type="image/svg+xml" src="http://127.0.0.1:6475/video_feed" />
+                        <embed type="image/svg+xml" src={embedSource} />
                     </ResponsiveEmbed>
                 </div>
                 <ReactNipple
