@@ -73,13 +73,15 @@ if not open_success:
     log.error("Could not open robot motor modality")
     sys.exit(-1)
 
-open_success = myrobot.open_modality("proprioception")
-if not open_success:
-    log.error("Could not open robot speech modality")
-    sys.exit(-1)
+# open_success = myrobot.open_modality("proprioception")
+# if not open_success:
+#     log.error("Could not open robot speech modality")
+#     sys.exit(-1)
 
 
 motorDict = utils.get_motor_dict()
+print("MOTORDICT")
+print(motorDict)
 list_of_motions = [motorDict.copy()]
 
 motorDict["head_left_right"] = 2 * utils.HEAD_RIGHT
@@ -87,7 +89,7 @@ motorDict["head_up_down"] = 2 * utils.HEAD_UP
 motorDict["head_roll"] = 0.0
 motorDict["body_forward"] = 100.0
 motorDict["body_sideways"] = 0.0
-motorDict["body_rotate"] = 0.0
+motorDict["body_rotate"] = .0
 list_of_motions.append(motorDict.copy())
 
 motorDict["head_left_right"] = 2 * utils.HEAD_LEFT
@@ -104,6 +106,8 @@ cv2.namedWindow("RobotView")
 # sio.connect('http://localhost:5000')
 try:
     while True:
+        motorDict = utils.get_motor_dict()
+        print(motorDict.copy())
         image_list, err = myrobot.get_modality("vision", True)
         if err.success:
             # sio.emit('pythondata', str(image_list[0].image))                      # send to server
@@ -114,12 +118,13 @@ try:
 
             counter += 1
 
-            # if counter > 100:
-            #     counter = 0
-            #     if motion_counter >= len(list_of_motions):
-            #         motion_counter = 0
-            #     ret = myrobot.set_modality("motor", list(list_of_motions[motion_counter].values()))
-            #     motion_counter += 1
+            if counter > 100:
+                counter = 0
+                if motion_counter >= len(list_of_motions):
+                    motion_counter = 0
+                ret = myrobot.set_modality("motor", list(list_of_motions[motion_counter].values()))
+                print(ret)
+                motion_counter += 1
 
 except KeyboardInterrupt:
     cv2.destroyAllWindows()

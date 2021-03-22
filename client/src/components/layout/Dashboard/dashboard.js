@@ -1,29 +1,91 @@
 import React, { Fragment, useState, useContext, useEffect } from 'react'
 import Axios from "axios";
-import { CardDeck, Row, Col, Button, ResponsiveEmbed, ButtonGroup, ToggleButton } from 'react-bootstrap'
+import { ResponsiveEmbed, ButtonGroup, ToggleButton } from 'react-bootstrap'
 import "../../../components/assets/style.css";
-import { FaClock, FaUndo, FaPowerOff } from 'react-icons/fa';
+import { FaPowerOff } from 'react-icons/fa';
 import ModuleHeader from "../ModuleHeader/ModuleHeader";
 import { useCookies } from "react-cookie";
 import socketIOClient from "socket.io-client";
 import UserContext from "../../../context/UserContext";
-import ReactNipple from 'react-nipple';
+// import ReactNipple from 'react-nipple';
 import 'react-nipple/lib/styles.css';
+import useKeyPress from "../../keyboard/useKeyPress";
 
 const socket = socketIOClient();
 
 export default function Dashboard() {
-    // const [userUpload,setUserUpload]=useState("-");
-    // const [totalUpload,setTotalUpload]=useState("-");
-    // const [bestUploader,setBestUploader]=useState("-");
-    const {tempEmail,tempPassword} = useContext(UserContext)
+
+    const { tempEmail, tempPassword } = useContext(UserContext)
     const [cookies] = useCookies(["user"]);
     const [validation, setValidator] = useState("");
     const [toggleState, setToggleState] = useState(false)
-    const [embedSource, setEmbedSource] = useState("https://robotapi.isensetune.com/video_feed");
+    const [embedSource, setEmbedSource] = useState("http://127.0.0.1:6475/video_feed");
 
-    
+    const upPress = useKeyPress("w");
+    const leftPress = useKeyPress("a");
+    const rightPress = useKeyPress("d");
+    const leftRotatePress = useKeyPress("q");
+    const rightRotatePress = useKeyPress("e");
+    const headUpPress = useKeyPress("i");
+    const headDownPress = useKeyPress("k");
+    const headLeftPress = useKeyPress("j");
+    const headRightPress = useKeyPress("l");
 
+    useEffect(()=>{
+        if(!upPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[upPress])
+
+    useEffect(()=>{
+        if(!leftPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[leftPress])
+
+    useEffect(()=>{
+        if(!rightPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[rightPress])
+
+    useEffect(()=>{
+        if(!leftRotatePress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[leftRotatePress])
+
+    useEffect(()=>{
+        if(!rightRotatePress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[rightRotatePress])
+
+    ///////////////////////
+    //////////////////////
+    useEffect(()=>{
+        if(!headUpPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[headUpPress])
+
+    useEffect(()=>{
+        if(!headDownPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[headDownPress])
+
+    useEffect(()=>{
+        if(!headLeftPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[headLeftPress])
+
+    useEffect(()=>{
+        if(!headRightPress){
+            socket.emit("frontenddata", "nullmotion")
+        }
+    },[headRightPress])
     // useEffect(()=>{
     //     const startRobot = async(e) =>{
     //         if(toggleState){
@@ -33,7 +95,7 @@ export default function Dashboard() {
     //                 body,
     //                 {headers:{"Content-Type":"application/json", "Access-Control-Allow-Origin":"*"}}
     //             );
-                
+
     //             if(response.status==200){
     //                 Axios.get(
     //                     "http://127.0.0.1:6475/start",
@@ -42,7 +104,7 @@ export default function Dashboard() {
     //                 ).then(function(response){
     //                     setEmbedSource("http://127.0.0.1:6475/video_feed")
     //                 })
-                    
+
     //             }
     //             //setEmbedSource("http://hwutelepresence.robot:6475/video_feed")
     //         }
@@ -123,17 +185,32 @@ export default function Dashboard() {
         getData();
     }, [toggleState]);
 
-    const handleHeadMovement = (data) =>{
-        try{
-            const direction=data['direction']['angle'];
-            socket.emit("frontenddata",direction)
-        }catch(err){
-            console.log(err)
-        }
+    // const handleHeadMovement = (data) => {
+    //     try {
+    //         const direction = data['direction']['angle'];
+    //         socket.emit("frontenddata", "head_"+direction)
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // }
+
+    const handleMovement = (data)=>{
+        socket.emit("frontenddata", data)
     }
 
     return (
         <Fragment>
+            {upPress && handleMovement("forward")}
+            {leftPress && handleMovement("left")}
+            {rightPress && handleMovement("right")}
+            {leftRotatePress && handleMovement("rotate_left")}
+            {rightRotatePress && handleMovement("rotate_right")}
+
+            {headUpPress && handleMovement("head_up")}
+            {headDownPress && handleMovement("head_down")}
+            {headLeftPress && handleMovement("head_left")}
+            {headRightPress && handleMovement("head_right")}
+            
             <ModuleHeader moduleName={"Dashboard"} />
             {/* <Row >
                 <Col className="mb-2" sm align="right">
@@ -148,12 +225,13 @@ export default function Dashboard() {
             </CardDeck> */}
 
             <center>
+                <h5>Current Location: Bergen, Norway</h5>
                 <ButtonGroup toggle className="mb-2">
                     <ToggleButton
                         type="checkbox"
                         variant="info"
-                        
-                        style={{ display:'none', fontSize: '3em' }}
+
+                        style={{ display: 'none', fontSize: '3em' }}
                         checked={toggleState}
                         value="1"
                         onChange={(e) => setToggleState(e.currentTarget.checked)}
@@ -161,13 +239,13 @@ export default function Dashboard() {
                         <FaPowerOff />
                     </ToggleButton>
                 </ButtonGroup>
-                
+
                 <div style={{ width: 660, height: 'auto', border: 'solid 3px #bbb', borderRadius: '5px' }}>
                     <ResponsiveEmbed aspectRatio="16by9">
                         <embed type="image/svg+xml" src={embedSource} />
                     </ResponsiveEmbed>
                 </div>
-                <ReactNipple
+                {/* <ReactNipple
                     // supports all nipplejs options
                     // see https://github.com/yoannmoinet/nipplejs#options
                     options={{ mode: 'static', position: { top: '50%', left: '50%' } }}
@@ -181,7 +259,7 @@ export default function Dashboard() {
                     // all events supported by nipplejs are available as callbacks
                     // see https://github.com/yoannmoinet/nipplejs#start
                     onMove={(evt, data) => handleHeadMovement(data)}
-                />
+                /> */}
             </center>
 
 

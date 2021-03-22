@@ -5,6 +5,7 @@ require("dotenv").config();
 const helmet = require("helmet");
 const socketio = require("socket.io")
 const request = require('request');
+const ngrok = require('ngrok');
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
@@ -43,10 +44,6 @@ app.use((req, res, next) => {
 app.use("/api/feed", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
 
-
-
-
-
 app.get("*", function (req, res) {
   res.sendFile('index.html', { root });
 })
@@ -54,6 +51,21 @@ app.get("*", function (req, res) {
 app.use(helmet());
 
 const server = app.listen(PORT, () => console.log(`The server has started on port: ${PORT}`));
+
+/////////////////////
+//////////////////////
+///////////////////
+
+ngrok.connect({
+  proto : 'http',
+  addr : 'PORT',
+
+}, (err, url) => {
+  if (err) {
+      console.error('Error while connecting Ngrok',err);
+      return new Error('Ngrok Failed');
+  }
+})
 const io = socketio(server,{cors:{origin: '*',}})
 
 let interval;
@@ -84,6 +96,7 @@ io.on("connection", (socket) => {
     //   data:'2'
     // })
     // console.log(ret)
+    // io.broadcast.emit("FROMNODEAPI",data)
     socket.broadcast.emit("FROMNODEAPI",data)
   })
 
@@ -94,4 +107,4 @@ const getApiAndEmit = socket => {
   const response = new Date();
   // Emitting a new message. Will be consumed by the client
   socket.emit("FromAPI", response);
-};
+}

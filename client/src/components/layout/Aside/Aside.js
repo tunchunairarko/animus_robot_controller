@@ -55,7 +55,7 @@ const Aside = ({ collapsed, toggled, handleToggleSidebar }) => {
         </SidebarHeader>
 
         <SidebarContent>
-          <Menu iconShape="circle">
+          <Menu iconShape="square">
 
             <MenuItem
 
