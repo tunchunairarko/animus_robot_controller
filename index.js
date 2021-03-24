@@ -5,7 +5,6 @@ require("dotenv").config();
 const helmet = require("helmet");
 const socketio = require("socket.io")
 const request = require('request');
-const ngrok = require('ngrok');
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
@@ -56,17 +55,7 @@ const server = app.listen(PORT, () => console.log(`The server has started on por
 //////////////////////
 ///////////////////
 
-ngrok.connect({
-  proto : 'http',
-  addr : 'PORT',
-
-}, (err, url) => {
-  if (err) {
-      console.error('Error while connecting Ngrok',err);
-      return new Error('Ngrok Failed');
-  }
-})
-const io = socketio(server,{cors:{origin: '*',}})
+const io = socketio(app)
 
 let interval;
 
