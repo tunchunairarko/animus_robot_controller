@@ -55,7 +55,9 @@ const server = app.listen(PORT, () => console.log(`The server has started on por
 //////////////////////
 ///////////////////
 
-const io = socketio(server)
+
+
+const io = socketio(server,{pingTimeout: 0, origins: '*:*'})
 
 let interval;
 
