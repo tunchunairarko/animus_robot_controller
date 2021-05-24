@@ -7,8 +7,8 @@ const User = require("../models/userModel");
 
 router.post("/register", async (req, res) => {
   try {
-    let { username, email, password, passwordCheck, displayName } = req.body;
-
+    let { username, email, password, passwordCheck, displayName,affiliation,institution,country,dateOfBirth } = req.body;
+    console.log(req.body)
     // validate
     const existingUser = await User.findOne({ username: username });
     if (existingUser)
@@ -39,12 +39,16 @@ router.post("/register", async (req, res) => {
 
     const salt = await bcrypt.genSalt(); //asynchronous operation
     const passwordHash = await bcrypt.hash(password, salt); // the official bcryptjs documentation has a different way to implement this. 
-
+    console.log("herlo")
     const newUser = new User({
       username,
       email,
       password: passwordHash,
       displayName,
+      affiliation: affiliation.affiliation,
+      institution,
+      country,
+      dateOfBirth
     });
     const savedUser = await newUser.save();
     res.json(savedUser);

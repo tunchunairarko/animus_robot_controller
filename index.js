@@ -4,7 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const helmet = require("helmet");
 const socketio = require("socket.io")
-const request = require('request');
+
 
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
@@ -40,8 +40,9 @@ app.use((req, res, next) => {
 });
 
 // set up routes
-app.use("/api/feed", require("./routes/robotRouter"));
+app.use("/api/robots", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
+app.use("/api/zoom", require("./routes/ZoomRouter"));
 
 app.get("*", function (req, res) {
   res.sendFile('index.html', { root });
@@ -73,29 +74,28 @@ io.on("connection", (socket) => {
     //   frame: Buffer.from(data.frame, 'base64').toString() // from buffer to base64 string
     // })
     socket.broadcast.emit("FROMPYAPI",base64data)
-    // io.Broad.emit("FROMPYAPI",frame)
-    // setInterval(function(){
-    //   //console.log(frame)
-    //   io.emit("FROMPYAPI",frame)
-    // },100 )
+    
   })
   
 
   socket.on("frontenddata",function(data){
     console.log(data)
-    // var ret = Object.assign({}, data, {
-    //   data:'2'
-    // })
-    // console.log(ret)
-    // io.broadcast.emit("FROMNODEAPI",data)
     socket.broadcast.emit("FROMNODEAPI",data)
+  })
+
+  socket.on("frontendspeechdata",function(data){
+    console.log(data)
+    
+    socket.broadcast.emit("FROMNODESPEECHAPI",data)
+  })
+
+  socket.on("remoterobotdata",function(data){
+    console.log(data)
+    
+    socket.broadcast.emit("FROMREMOTEROBOT",data)
+    
   })
 
 });
 
 
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-}

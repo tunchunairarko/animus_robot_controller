@@ -34,6 +34,9 @@ export default function ModuleHeader({moduleName}) {
                 {/* <Nav className="mr-auto">
                     <Nav.Link href="/settings" ><FaGem /> Robot Settings</Nav.Link>
                 </Nav> */}
+                    {/* <Navbar.Text className="navText">
+                        Current Location: Bergen, Norway
+                    </Navbar.Text> */}
                     <Navbar.Text className="navText">
                         Current time: {curTime}
                     </Navbar.Text>

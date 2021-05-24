@@ -1,44 +1,67 @@
-import React, { useState, Fragment} from 'react'
+import React, { useState, Fragment, useContext, useEffect } from 'react'
 import PrivateRoute from "../../../router/PrivateRoute";
 import Aside from '../Aside/Aside';
+import Sidebar from "../Sidebar/Sidebar";
 import 'react-pro-sidebar/dist/css/styles.css';
-import {  FaBars } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import '../../assets/Dashboard.scss';
-import RobotSettings from '../Settings/RobotSettings';
+// import RobotSettings from '../Settings/RobotSettings';
 import Dashboard from '../Dashboard/dashboard';
 import { Switch } from "react-router";
+import "../../../components/assets/style.css";
+import ModuleHeader from "../ModuleHeader/ModuleHeader";
+import UserContext from "../../../context/UserContext";
+import { useHistory } from "react-router-dom";
+import AddRobot from "../RobotManager/AddRobot";
+
 
 export default function Admin() {
-    
-    const [collapsed] = useState(false);
+    const { userData } = useContext(UserContext);
+    // const [collapsed] = useState(false);
+    // const [toggled, setToggled] = useState(false);
+    const history = useHistory();
+    useEffect(() => {
+        const checkIfUserExists = () =>{
+            if(!userData.user){
+                history.push("/login")
+            }
+        }
+        checkIfUserExists()
+        // return () => {
+        //     cleanup
+        // }
+    }, [])
+    // const handleToggleSidebar = (value) => {
+    //     setToggled(value);
+    // };
 
-    const [toggled, setToggled] = useState(false);
-
-
-    const handleToggleSidebar = (value) => {
-        setToggled(value);
-    };
-    
     return (
-        <Fragment>            
-                <div id="content-body" className={`app  ${toggled ? 'toggled' : ''}`}>
-                    <Aside
+        <Fragment>
+            {/* <div id="content-body" className={`app  ${toggled ? 'toggled' : ''}`}>
+                    {/* <Aside
                         collapsed={collapsed}
                         toggled={toggled}
                         handleToggleSidebar={handleToggleSidebar}
-                    />
+                    /> 
+                    
+                </div> */}
+            <Fragment>
+                    <Sidebar />
                     <main>
-                        <div className="btn-toggle" onClick={() => handleToggleSidebar(true)}>
+
+                        {/* <div className="btn-toggle" onClick={() => handleToggleSidebar(true)}>
                             <FaBars />
-                        </div>
-                        <div className="container-fluid">
+                        </div> */}
+                        <div className="container-fluid main-body">
+                            <ModuleHeader moduleName={"Dashboard"} />
                             <Switch>
-                                <PrivateRoute component={RobotSettings} path="/settings"  />
+                                <PrivateRoute component={AddRobot} path="/robots/add" />
                                 <PrivateRoute component={Dashboard} path="/dashboard" />
                             </Switch>
                         </div>
                     </main>
-                </div>
+                </Fragment>
+
         </Fragment>
     )
 }

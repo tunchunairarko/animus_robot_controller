@@ -74,7 +74,7 @@ export default function App() {
                         path: "/"
                     });
                     window.location.replace("/login", { path: '/' });
-                    // history.push("/login");
+                    
                     // logout();
                 }
                 // console.log(tokenResponse)
@@ -99,6 +99,7 @@ export default function App() {
                             path: "/"
                         });
                     }
+                    
                 }
                 
             }
@@ -116,6 +117,7 @@ export default function App() {
                         <PublicRoute restricted={true} component={Register} path="/register" exact />
                         <PrivateRoute component={Admin} path="/dashboard" exact />
                         <PrivateRoute component={Admin} path="/settings" exact />
+                        <PrivateRoute component={Admin} path="/robots/add" />
                         <PublicRoute restricted={true} component={Admin} path="/" exact />
                         
                     </Switch>

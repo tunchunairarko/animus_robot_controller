@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext,useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import Axios from "axios";
@@ -8,20 +8,20 @@ import Jumbotron from 'react-bootstrap/Jumbotron';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useDidMount, useWillUnmount } from "react-hooks-lib";
 import "../assets/Dashboard.scss";
-
+import { useCookies } from "react-cookie";
 
 export default function Login() {
-    
-    useDidMount(()=>{
+    const [cookies, setCookie] = useCookies(["user"]);
+    useEffect(() => {
         const bodyElt = document.querySelector("body");
-        bodyElt.style.setProperty("background-image","url(back.png)")
-    })
-    useWillUnmount(()=>{
-        const bodyElt = document.querySelector("body");
-        bodyElt.style.setProperty("background-image","none")
-    })
+        bodyElt.style.setProperty("background-image", "url(back.png)")
+
+        return function cleanup() {
+            const bodyElt = document.querySelector("body");
+            bodyElt.style.setProperty("background-image", "none")
+        };
+    }, [])
     
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
@@ -42,6 +42,16 @@ export default function Login() {
                 token: loginRes.data.token,
                 user: loginRes.data.user,
             });
+            setCookie("username", loginRes.data.user.username, {
+                path: "/"
+            });
+
+            setCookie("email", loginRes.data.user.email, {
+                path: "/"
+            });
+            setCookie("displayName", loginRes.data.user.displayName, {
+                path: "/"
+            });
             localStorage.setItem("auth-token", loginRes.data.token);
             history.push("/");
         } catch (err) {
@@ -56,7 +66,7 @@ export default function Login() {
                         <ErrorNotice message={error} clearError={() => setError(undefined)} />
                     )}
                     <h1>
-                        HWU Telepresence Hub - LOGIN
+                        Curi-O LOGIN
                     </h1>
                     <Form onSubmit={submit}>
                         <Form.Group controlId="formUserName">
