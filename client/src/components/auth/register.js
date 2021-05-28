@@ -93,7 +93,7 @@ export default function Register() {
             <Container className="p-3 register-form">
                 <Jumbotron className="shadow-sm rounded">
                     <h1 as={Row} style={{ display: 'flex', justifyContent: 'center' }}>
-                        Join Curi-O
+                        Join HWU Telepresence
                     </h1>
                     <Form onSubmit={submit}>
                         <Form.Row>

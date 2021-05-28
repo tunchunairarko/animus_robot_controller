@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useContext } from 'react';
 // import ClickOutside from "react-click-outside";
 import { Link, useHistory } from "react-router-dom";
-import Logo from '../../assets/curio-logo.png';
+import Logo from '../../assets/logo.png';
 import Image from 'react-bootstrap/Image';
 import UserContext from "../../../context/UserContext";
 import { FaRobot, FaListAlt, FaCogs, FaPowerOff, FaUserAlt, FaColumns } from 'react-icons/fa';

@@ -66,7 +66,7 @@ export default function Login() {
                         <ErrorNotice message={error} clearError={() => setError(undefined)} />
                     )}
                     <h1>
-                        Curi-O LOGIN
+                        HWU Telepresence LOGIN
                     </h1>
                     <Form onSubmit={submit}>
                         <Form.Group controlId="formUserName">

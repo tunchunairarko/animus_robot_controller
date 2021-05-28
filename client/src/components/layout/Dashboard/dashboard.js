@@ -185,7 +185,7 @@ export default function Dashboard() {
     const [cookies] = useCookies(["user"]);
     const [validation, setValidator] = useState("");
     const [toggleState, setToggleState] = useState(false)
-    const [embedSource, setEmbedSource] = useState("http://127.0.0.1:12342/video_feed");
+    const [embedSource, setEmbedSource] = useState("https://robotapi.isensetune.com/video_feed");
     const [baseSpeed, setBaseSpeed] = useState(50);
     const [headSpeed, setHeadSpeed] = useState(50);
     const [startCall, setStartCall] = useState(true);
@@ -524,11 +524,11 @@ export default function Dashboard() {
                             <Card.Header className="dashboard-box-design-card-header">Heartbeat monitor</Card.Header>
                             {/* <Card.Body style={{ margin: 'auto' }}> */}
                             <Card.Body style={{ margin: '2px' }}>
-                                {/* <Button className="mr-2 ml-2"><FaQuidditch /> Create instant task</Button>
+                                <Button className="mr-2 ml-2"><FaQuidditch /> Create instant task</Button>
                                 <Button className="mr-2 ml-2"><FaCalendarAlt /> Schedule task</Button>
-                                <Button className="mr-2 ml-2"><FaCogs /> Manage task schedule</Button> */}
+                                <Button className="mr-2 ml-2"><FaCogs /> Manage task schedule</Button>
 
-                                <ReactApexChart options={options} series={series} type="line" height={250} />
+                                
                             </Card.Body>
 
                         </Card>
@@ -543,7 +543,7 @@ export default function Dashboard() {
                             </video> */}
                                     {/* <Image src={embedSource} /> */}
                                     {/* <embed type="image/svg+xml" src={embedSource} /> */}
-                                    <ReactApexChart options={options2} series={series2} type="bar" height={250} />
+                                    {/* <ReactApexChart options={options2} series={series2} type="bar" height={250} /> */}
                                 </ResponsiveEmbed>
                             </Card.Body>
 

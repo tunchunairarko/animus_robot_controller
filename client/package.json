@@ -1,6 +1,5 @@
 {
   "name": "animus_robot_controller_ui",
-
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -41,7 +40,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-widgets": "^5.1.1",
-    "socket.io-client": "^4.0.1",
+    "socket.io-client": "^2.3.1",
     "styled-components": "^5.2.3",
     "systeminformation": "^5.6.21",
     "underscore": "^1.13.0-2",
