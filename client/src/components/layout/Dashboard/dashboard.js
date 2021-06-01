@@ -319,10 +319,6 @@ export default function Dashboard() {
                                 { headers: { "x-auth-token": token } }
                             )
 
-                            // if (robotRes.data) {
-                            //     console.log(robotRes.data)
-                            // }
-
                         } catch (error) {
                             console.log(error)
 
