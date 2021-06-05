@@ -19,8 +19,8 @@ StyledSideNav.defaultProps = SideNav.defaultProps;
 // Toggle
 const StyledToggle = styled(Toggle)`
     background-color: #192a56;
-    height:96px;
-    width:96px;
+    height:64px;
+    width:64px;
 `;
 StyledToggle.defaultProps = Toggle.defaultProps;
 
@@ -55,7 +55,7 @@ const StyledNav = styled(Nav)`
     && > [class*="sidenav-navitem--"] {
         > [class*="navitem--"] {
             background-color: inherit;
-            margin: 15px;
+            margin: 15px 0px;
         }
     }
     && > [class*="sidenav-navitem--"]:hover {

@@ -229,8 +229,17 @@ body{
     color:#4e73df!important;
     font-weight: 700!important;
 }
-.btn-primary{
+.btn-primary,.badge-primary{
     background-color: #321fdb!important;
+    border-color: #321fdb!important;
+}
+.btn-outline-primary{
+    border-color: #321fdb!important;
+    color: #321fdb!important;
+}
+.btn-outline-primary:hover{
+    background-color: #321fdb!important;
+    color:#fff!important;
 }
 .no-robot-container{
     width: 100%;
@@ -271,3 +280,23 @@ body{
     transition: 0.15s;
     
 }
+.center-content{
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{
+    color: #fff!important;
+    background-color: #16a085!important;
+    border-color: #16a085!important;
+  }
+  .nav-tabs{
+      border-bottom:1px solid #16a085!important;
+  }
+  :is(.nav) a{
+      color:inherit;
+  }
+
+  :is(.nav) a:hover{
+      border:none;
+  }

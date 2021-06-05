@@ -1,48 +1,74 @@
-import React, {Fragment,useState} from 'react'
-import { Nav, Navbar,} from 'react-bootstrap'
+import React, { Fragment, useState, useEffect } from 'react'
+import { Nav, Navbar, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { FaGem, } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
 import { useDidMount } from "react-hooks-lib";
+import DropdownList from "react-widgets/DropdownList";
+import "react-widgets/styles.css";
+import { AiFillApi, AiOutlineDisconnect } from "react-icons/ai";
+import { RiSignalWifiOffLine } from "react-icons/ri";
+import Logo from "../../assets/logo.png"
+import { FcEmptyBattery } from "react-icons/fc";
 
+export default function ModuleHeader({ moduleName }) {
 
-export default function ModuleHeader({moduleName}) {
-    
     const [curTime, setCurTime] = useState();
-    const [dispName, setDispName]=useState("");
+    const [dispName, setDispName] = useState("");
     // const { userData } = useContext(UserContext);
     const [cookies] = useCookies(["user"]);
 
+    const [dummyRoomData, setDummyRoomData] = useState(
+        [
+            { "robot": "Pepper (Patient: Mauro Dragone) - Currie, Edinburgh" }
+        ]
+    )
 
-    useDidMount(() => {
+    useEffect(() => {
         setInterval(() => {
             setCurTime(new Date().toLocaleTimeString())
-            if(!dispName){
-                if(cookies.username){
+            if (!dispName) {
+                if (cookies.username) {
                     setDispName(cookies.username)
                 }
             }
-        }, 1000)    
-        
+        }, 1000)
     })
+
     return (
         <Fragment>
             <Navbar collapseOnSelect expand="lg" variant="light" bg="light" className="moduleHeader">
-                <Navbar.Brand href="/Dashboard">{moduleName}</Navbar.Brand>
+                <Nav style={{ minWidth: "30%" }}>
+                    <DropdownList
+                        defaultValue="Pepper (Patient: Mauro Dragone) - Currie, Edinburgh"
+                        data={dummyRoomData}
+                        textField='robot'
+                    />
+                </Nav>
+
                 <Navbar.Toggle />
-                
+
                 <Navbar.Collapse className="justify-content-end">
-                {/* <Nav className="mr-auto">
-                    <Nav.Link href="/settings" ><FaGem /> Robot Settings</Nav.Link>
-                </Nav> */}
-                    {/* <Navbar.Text className="navText">
-                        Current Location: Bergen, Norway
-                    </Navbar.Text> */}
                     <Navbar.Text className="navText">
                         Current time: {curTime}
                     </Navbar.Text>
-                    <Navbar.Text className="navText">
-                        Signed in as: <a href="/login">{dispName}</a>
-                    </Navbar.Text>
+                    {/* <Navbar.Text className="navText">
+                        Signed in as: <a href="/login">{wifiSpeed}</a>
+                    </Navbar.Text> */}
+
+                    <Nav>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Telecare connection strength</Tooltip>}>
+                            <Button variant="light" className="mr-2"><RiSignalWifiOffLine /></Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Robot's battery level</Tooltip>}>
+                            <Button variant="light" className="mr-2"><FcEmptyBattery /></Button>
+                        </OverlayTrigger>
+                        {/* <OverlayTrigger placement="bottom" overlay={<Tooltip >Connect </Tooltip>}>
+                            <Button variant="success" className="mr-2"><AiFillApi /></Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Disconnect</Tooltip>}>
+                            <Button variant="danger"><AiOutlineDisconnect /></Button>
+                        </OverlayTrigger>                     */}
+                    </Nav>
                 </Navbar.Collapse>
             </Navbar>
         </Fragment>

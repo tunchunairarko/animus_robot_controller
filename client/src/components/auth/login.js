@@ -1,5 +1,5 @@
 
-import React, { useState, useContext,useEffect } from "react";
+import React, { useState, useContext,useEffect,Fragment } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import Axios from "axios";
@@ -10,10 +10,19 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import "../assets/Dashboard.scss";
 import { useCookies } from "react-cookie";
+import Header from "../layout/Header/header";
 
 export default function Login() {
     const [cookies, setCookie] = useCookies(["user"]);
+    const { userData,setUserData } = useContext(UserContext);
+    const [username, setUsername] = useState();
+    const [password, setPassword] = useState();
+    const [error, setError] = useState();
+
+
+    const history = useHistory();
     useEffect(() => {
+        
         const bodyElt = document.querySelector("body");
         bodyElt.style.setProperty("background-image", "url(back.png)")
 
@@ -23,12 +32,7 @@ export default function Login() {
         };
     }, [])
     
-    const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
-    const [error, setError] = useState();
-
-    const { setUserData } = useContext(UserContext);
-    const history = useHistory();
+    
 
     const submit = async (e) => {
         e.preventDefault();
@@ -59,7 +63,8 @@ export default function Login() {
         }
     };
     return (
-        <>
+        <Fragment>
+            <Header/>
             <Container className="p-3 login-form" >
                 <Jumbotron>
                     {error && (
@@ -88,6 +93,6 @@ export default function Login() {
                     </Form>
                 </Jumbotron>
             </Container>
-        </>
+        </Fragment>
     );
 }

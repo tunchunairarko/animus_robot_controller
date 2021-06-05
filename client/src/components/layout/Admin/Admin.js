@@ -21,47 +21,28 @@ export default function Admin() {
     // const [toggled, setToggled] = useState(false);
     const history = useHistory();
     useEffect(() => {
-        const checkIfUserExists = () =>{
-            if(!userData.user){
+        const checkIfUserExists = () => {
+            if (!userData.user) {
                 history.push("/login")
             }
         }
         checkIfUserExists()
-        // return () => {
-        //     cleanup
-        // }
+
     }, [])
-    // const handleToggleSidebar = (value) => {
-    //     setToggled(value);
-    // };
+
 
     return (
         <Fragment>
-            {/* <div id="content-body" className={`app  ${toggled ? 'toggled' : ''}`}>
-                    {/* <Aside
-                        collapsed={collapsed}
-                        toggled={toggled}
-                        handleToggleSidebar={handleToggleSidebar}
-                    /> 
-                    
-                </div> */}
-            <Fragment>
-                    <Sidebar />
-                    <main>
-
-                        {/* <div className="btn-toggle" onClick={() => handleToggleSidebar(true)}>
-                            <FaBars />
-                        </div> */}
-                        <div className="container-fluid main-body">
-                            <ModuleHeader moduleName={"Dashboard"} />
-                            <Switch>
-                                <PrivateRoute component={AddRobot} path="/robots/add" />
-                                <PrivateRoute component={Dashboard} path="/dashboard" />
-                            </Switch>
-                        </div>
-                    </main>
-                </Fragment>
-
+            <Sidebar />
+            <main>
+                <div className="container-fluid main-body">
+                    <ModuleHeader moduleName={"Dashboard"} />
+                    <Switch>
+                        <PrivateRoute component={AddRobot} path="/robots/add" />
+                        <PrivateRoute component={Dashboard} path="/dashboard" />
+                    </Switch>
+                </div>
+            </main>
         </Fragment>
     )
 }

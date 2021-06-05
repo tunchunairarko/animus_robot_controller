@@ -15,12 +15,10 @@ import { DropdownList, DatePicker } from "react-widgets";
 import { CountryDropdown } from 'react-country-region-selector';
 import "react-widgets/styles.css";
 import "../assets/style.css";
+import Header from "../layout/Header/header";
 
 export default function Register() {
-    // useDidMount(()=>{
-    //     const bodyElt = document.querySelector("body");
-    //     bodyElt.style.setProperty("background-image","url(back.png)")
-    // })
+    
     useEffect(() => {
         const bodyElt = document.querySelector("body");
         bodyElt.style.setProperty("background-image", "url(back.png)")
@@ -30,11 +28,7 @@ export default function Register() {
             bodyElt.style.setProperty("background-image", "none")
         };
     }, [])
-    // useWillUnmount(()=>{
-    //     const bodyElt = document.querySelector("body");
-    //     bodyElt.style.setProperty("background-image","none")
-    // })
-
+    
     const affiliationList = [
         {"affiliation":"Doctor"},
         {"affiliation":"Nurse"},
@@ -68,7 +62,6 @@ export default function Register() {
         try {
             const newUser = { username, email, password, passwordCheck, displayName, affiliation,institution,country,dateOfBirth };
             const registerRes = await Axios.post(`/api/users/register`, newUser);
-            //   console.log(registerRes);
             const loginRes = await Axios.post(`/api/users/login`, {
                 username,
                 password,
@@ -87,6 +80,7 @@ export default function Register() {
 
     return (
         <div>
+            <Header/>
             {error && (
                 <ErrorNotice message={error} clearError={() => setError(undefined)} />
             )}

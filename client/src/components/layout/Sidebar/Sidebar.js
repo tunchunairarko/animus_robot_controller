@@ -1,20 +1,21 @@
-import React, { useState, Fragment, useContext } from 'react';
+import React, { useState, Fragment, useContext, useEffect } from 'react';
 // import ClickOutside from "react-click-outside";
 import { Link, useHistory } from "react-router-dom";
 import Logo from '../../assets/logo.png';
 import Image from 'react-bootstrap/Image';
+import { useCookies } from "react-cookie";
 import UserContext from "../../../context/UserContext";
 import { FaRobot, FaListAlt, FaCogs, FaPowerOff, FaUserAlt, FaColumns } from 'react-icons/fa';
 import styled from 'styled-components';
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from './StyledSideNav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-const navWidthCollapsed = 96;
+const navWidthCollapsed = 64;
 const navWidthExpanded = 320;
 
 const NavHeader = styled.div`
     display: ${props => (props.expanded ? 'block' : 'none')};
     white-space: nowrap;
-    height:96px;
+    height:64px;
     background-color: #192a56;
     color: #fff;
     > * {
@@ -27,7 +28,7 @@ const NavFooter = styled.div`
     position: absolute;
     bottom: 0px;
     white-space: nowrap;
-    height:96px;
+    height:64px;
     background-color: #192a56;
     color: #fff;
     > * {
@@ -65,32 +66,34 @@ const Separator = styled.div`
     height: 1px;
 `;
 
-
-
-
-
 export default function Sidebar() {
-
-
-
-    const { setUserData } = useContext(UserContext);
+    const [cookies, setCookie] = useCookies(["user"]);
+    // const [logoutSelected, setLogoutSelected]=useState(false)
+    const { userData,setUserData } = useContext(UserContext);
     const [selected, setSelected] = useState("dashboard")
     const [expanded, setExpanded] = useState(false)
     const history = useHistory(); //history is all events that had happened in the url bar
-    const logout = () => {
-        setUserData({
-            token: undefined,
-            user: undefined
-        }
-        );
-        localStorage.setItem("auth-token", "");
-        history.push("/login");
-    }
+    
+    
 
     const onSelect = (selected) => {
-        // setSelected(selected);
-        if (selected == "logout") {
-            logout()
+        if (selected === "logout") {
+            setUserData({
+                token: undefined,
+                user: undefined
+            });
+            localStorage.setItem("auth-token", "");
+            setCookie("username", "", {
+                path: "/"
+            });
+            setCookie("email", "", {
+                path: "/"
+            });
+            setCookie("displayName", "", {
+                path: "/"
+            });
+            
+            history.go(0)
         }
         else {
             const to = '/' + selected;
@@ -131,7 +134,7 @@ export default function Sidebar() {
                         </NavIcon>
                         <NavText style={{ paddingRight: 32 }} title="HOME">
                             DASHBOARD
-                            </NavText>
+                        </NavText>
                     </NavItem>
                     <NavItem eventKey="robots">
 
@@ -217,15 +220,11 @@ export default function Sidebar() {
                         </NavIcon>
                         <NavText style={{ paddingRight: 32 }} title="SIGN OUT">
                             SIGN OUT
-                            </NavText>
+                        </NavText>
                     </NavItem>
                 </Nav>
             </SideNav>
         </Fragment>
-
-
-
     )
-
 }
 
