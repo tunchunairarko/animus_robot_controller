@@ -1,6 +1,6 @@
-import React, { useState, Fragment, useContext, useEffect } from 'react';
+import React, { useState, Fragment, useContext } from 'react';
 // import ClickOutside from "react-click-outside";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Logo from '../../assets/logo.png';
 import Image from 'react-bootstrap/Image';
 import { useCookies } from "react-cookie";
@@ -23,33 +23,33 @@ const NavHeader = styled.div`
         background-color: inherit;
     }
 `;
-const NavFooter = styled.div`
+// const NavFooter = styled.div`
 
-    position: absolute;
-    bottom: 0px;
-    white-space: nowrap;
-    height:64px;
-    background-color: #192a56;
-    color: #fff;
-    > * {
-        color: inherit;
-        background-color: inherit;
-    }
-`;
+//     position: absolute;
+//     bottom: 0px;
+//     white-space: nowrap;
+//     height:64px;
+//     background-color: #192a56;
+//     color: #fff;
+//     > * {
+//         color: inherit;
+//         background-color: inherit;
+//     }
+// `;
 
-// height: 20px + 10px + 10px = 40px
-const NavTitle = styled.div`
-    font-size: 1.5em;
-    line-height: 16px;
-    padding: 24px 0px 10px 0px;
-`;
+// // height: 20px + 10px + 10px = 40px
+// const NavTitle = styled.div`
+//     font-size: 1.5em;
+//     line-height: 16px;
+//     padding: 24px 0px 10px 0px;
+// `;
 
-// height: 20px + 4px = 24px;
-const NavSubTitle = styled.div`
-    font-size: 0.875em;
-    line-height: 20px;
-    padding-bottom: 4px;
-`;
+// // height: 20px + 4px = 24px;
+// const NavSubTitle = styled.div`
+//     font-size: 0.875em;
+//     line-height: 20px;
+//     padding-bottom: 4px;
+// `;
 
 const NavInfoPane = styled.div`
     float: left;
@@ -58,18 +58,18 @@ const NavInfoPane = styled.div`
     background-color: #eee;
 `;
 
-const Separator = styled.div`
-    clear: both;
-    position: relative;
-    margin: .8rem 0;
-    background-color: #ddd;
-    height: 1px;
-`;
+// const Separator = styled.div`
+//     clear: both;
+//     position: relative;
+//     margin: .8rem 0;
+//     background-color: #ddd;
+//     height: 1px;
+// `;
 
 export default function Sidebar() {
     const [cookies, setCookie] = useCookies(["user"]);
     // const [logoutSelected, setLogoutSelected]=useState(false)
-    const { userData,setUserData } = useContext(UserContext);
+    const { setUserData } = useContext(UserContext);
     const [selected, setSelected] = useState("dashboard")
     const [expanded, setExpanded] = useState(false)
     const history = useHistory(); //history is all events that had happened in the url bar

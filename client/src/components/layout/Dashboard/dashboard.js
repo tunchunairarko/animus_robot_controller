@@ -1,13 +1,13 @@
-import React, { Fragment, useState, useContext, useEffect } from 'react'
+import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
 import Axios from "axios";
-import { ResponsiveEmbed, Form, Card, Row, Col, Image, Button, Badge } from 'react-bootstrap'
+import { ResponsiveEmbed, Row, Col, Button } from 'react-bootstrap'
 import "../../../components/assets/style.css";
-import { FaArrowAltCircleDown, FaArrowAltCircleRight, FaArrowCircleLeft, FaArrowCircleUp, FaCalendarAlt, FaCogs, FaCross, FaMinusCircle, FaPlusCircle, FaQuidditch, FaRedo, FaStopCircle, FaUndo } from 'react-icons/fa';
+import { FaPlusCircle } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
-import socketIOClient from "socket.io-client";
+import io  from "socket.io-client";
 import UserContext from "../../../context/UserContext";
 import 'react-nipple/lib/styles.css';
-import RangeSlider from 'react-bootstrap-range-slider';
+import { useAlert } from 'react-alert';
 import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
 import useKeyPress from "../../keyboard/useKeyPress";
 import "react-widgets/styles.css";
@@ -15,23 +15,24 @@ import { useMediaQuery } from 'react-responsive'
 import ControlPanel from "./ControlPanel"
 import { useHistory } from "react-router-dom";
 import DoctorWidget from "./DoctorWidget"
-const socket = socketIOClient();
+
+const socket = io();
+
 
 export default function Dashboard() {
     const isDesktopOrLaptop = useMediaQuery({
         query: '(min-device-width: 1224px)'
     })
-    const history=useHistory()
+    const { userData } = useContext(UserContext);
+    const history = useHistory()
     const [userRobots, setUserRobots] = useState()
     const [cookies] = useCookies(["user"]);
-    const [validation, setValidator] = useState("");
+
     const [toggleState, setToggleState] = useState(false)
     // const [embedSource, setEmbedSource] = useState("https://robotapi.isensetune.com/video_feed");
-    const [embedSource, setEmbedSource] = useState("http://127.0.0.1:12342/video_feed");
-    const [startCall, setStartCall] = useState(true);
-    const [speech, setSpeech] = useState("");
-    const [prescribedTasks,setPrescribedTasks] = useState([])
-    const [vitalHistory,setVitalHistory] = useState([])
+
+    const [prescribedTasks, setPrescribedTasks] = useState([])
+    const [vitalHistory, setVitalHistory] = useState([])
 
 
     const upPress = useKeyPress("w");
@@ -44,34 +45,110 @@ export default function Dashboard() {
     const headLeftPress = useKeyPress("j");
     const headRightPress = useKeyPress("l");
 
-    const [upClick,setUpClick] = useState(false);
-    const [leftClick,setLeftClick] = useState(false);
-    const rightClick = useKeyPress("d");
-    const leftRotateClick = useKeyPress("q");
-    const rightRotateClick = useKeyPress("e");
-    const headUpClick = useKeyPress("i");
-    const headDownClick = useKeyPress("k");
-    const headLeftClick = useKeyPress("j");
-    const headRightClick = useKeyPress("l");
-    const [keyboardNav, setKeyboardNav] = useState(false);
+    const [upClick, setUpClick] = useState(false);
+    const [clickVal, setClickVal] = useState(0)
+    // const rightClick = useKeyPress("d");
+    // const leftRotateClick = useKeyPress("q");
+    // const rightRotateClick = useKeyPress("e");
+    // const headUpClick = useKeyPress("i");
+    // const headDownClick = useKeyPress("k");
+    // const headLeftClick = useKeyPress("j");
+    // const headRightClick = useKeyPress("l");
+    const [keyboardNav, setKeyboardNav] = useState(true);
+    const [obstacleAv, setObstacleAv] = useState(true);
 
+    const [prescriptionMsg, setPrescriptionMsg] = useState("");
+    const [prescriptionType, setPrescriptionType] = useState("Medication")
+    const [prescriptionSchedule, setPrescriptionSchedule] = useState(new Date())
+
+    const alert = useAlert()
+    const [errorNotice, setErrorNotice] = useState()
+    const [successNotice, setSuccessNotice] = useState()
+
+    const iframeContainer = useRef(null)
+
+    useEffect(()=>{
+        const sendKeySignal = async() =>{
+            if(clickVal!==0 && keyboardNav){
+                console.log(clickVal)
+                socket.emit("frontenddata",clickVal)
+            }
+        }
+        sendKeySignal()
+    })
+    useEffect(()=>{
+        if(clickVal===0){
+            socket.emit("frontenddata","nullmotion")
+        }
+    },[clickVal])
+
+    useEffect(() => {
+        if (successNotice) {
+            alert.success(<div style={{ 'fontSize': '0.70em' }}>{successNotice}</div>)
+            setSuccessNotice(undefined)
+        }
+    }, [successNotice])
+
+    useEffect(() => {
+        if (errorNotice) {
+            alert.error(<div style={{ 'fontSize': '0.70em' }}>{errorNotice}</div>)
+            setErrorNotice(undefined)
+        }
+    }, [errorNotice])
     useState(() => {
-        setUserRobots(["Pepper"])
-        setPrescribedTasks([
-            {"dateAndTime":"10 May, 09:00 am","prescribedAction":"Next appointment"},
-            {"dateAndTime":"10 May, 10:00 am","prescribedAction":"Take aspirin"},
-            {"dateAndTime":"11 May, 04:00 pm","prescribedAction":"Do yoga"},
-            {"dateAndTime":"11 May, 09:00 pm","prescribedAction":"Take Panadol"},
-        ])
-        setVitalHistory([
-            {"dateAndTime":"10 May","temperature":"37.2","heartRate":"80","bloodPressure":"119/81"},
-            {"dateAndTime":"10 May","temperature":"37.1","heartRate":"65","bloodPressure":"119/80"},
-            {"dateAndTime":"11 May","temperature":"37.3","heartRate":"92","bloodPressure":"121/75"},
-            {"dateAndTime":"12 May","temperature":"37.4","heartRate":"76","bloodPressure":"122/85"},
-        ])
+        const compMount = async () => {
+            setUserRobots(["Pepper"])
+            
+            let token = localStorage.getItem("auth-token");
+            if (token == null) {
+                localStorage.setItem("auth-token", "");
+                token = "";
+            }
+            else {
+                const tokenResponse = await Axios.post(
+                    "/api/users/tokenIsValid",
+                    null,
+                    { headers: { "x-auth-token": token } }
+                );
+                // console.log(searchQuery)
+
+                if (tokenResponse.data) {
+                    try {
+                        const res = await Axios.get(
+                            "/api/telecare/prescription",
+                            { headers: { "x-auth-token": token } }
+                        )
+
+                        handlePrescribedTasks(res.data)
+                    } catch (error) {
+                        console.log(error)
+
+                    }
+                }
+            }
+            setVitalHistory([
+                { "dateAndTime": "10 May", "temperature": "37.2", "heartRate": "80", "bloodPressure": "119/81" },
+                { "dateAndTime": "10 May", "temperature": "37.1", "heartRate": "65", "bloodPressure": "119/80" },
+                { "dateAndTime": "11 May", "temperature": "37.3", "heartRate": "92", "bloodPressure": "121/75" },
+                { "dateAndTime": "12 May", "temperature": "37.4", "heartRate": "76", "bloodPressure": "122/85" },
+            ])
+            
+        }
+        const handler = async(e) => {
+            try{
+                const tempRoomdt = JSON.parse(e.data)
+                localStorage.setItem("roomsize",tempRoomdt.roomsize)
+            }
+            catch(err){
+                void(0)
+            }
+            // localStorage.setItem("roomsize",JSON.parse(e.data))
+        }
+        compMount()
+        window.addEventListener("message", handler)
     }, [])
 
-    
+
     useEffect(() => {
         if (!upPress) {
             socket.emit("frontenddata", "nullmotion")
@@ -129,28 +206,7 @@ export default function Dashboard() {
     }, [headRightPress])
 
 
-    useEffect(() => {
-        const checkValidation = async (e) => {
-            let token = localStorage.getItem("auth-token");
-            if (token == null) {
-                localStorage.setItem("auth-token", "");
-                token = "";
-            }
-            else {
-                const tokenResponse = await Axios.post(
-                    "/api/users/tokenIsValid",
-                    null,
-                    { headers: { "x-auth-token": token } }
-                );
-                // console.log(searchQuery)
 
-                if (tokenResponse.data) {
-                    setValidator(token);
-                }
-            }
-        }
-        checkValidation();
-    }, [validation]);
 
 
     useEffect(() => {
@@ -189,36 +245,102 @@ export default function Dashboard() {
         getData();
     }, [toggleState]);
 
-    const handleHeadMovement = (data) => {
-        try {
-            const direction = data['direction']['angle'];
-            socket.emit("frontenddata", "head_" + direction)
-        } catch (err) {
-            console.log(err)
+    const validateToken = async (e) => {
+        let token = localStorage.getItem("auth-token");
+        if (token == null) {
+            localStorage.setItem("auth-token", "");
+            token = "";
+            return 0
+        }
+        else {
+            const tokenResponse = await Axios.post(
+                "/api/users/tokenIsValid",
+                null,
+                { headers: { "x-auth-token": token } }
+            );
+            // console.log(searchQuery)
+
+            if (tokenResponse.data) {
+                return (token)
+            }
+            else {
+                return 0
+            }
         }
     }
 
+
     const handleMovement = (data) => {
-        socket.emit("frontenddata", data)
+        if(keyboardNav){
+            socket.emit("frontenddata", data)
+        }
     }
 
-    const handleSwitch = (elem, state) => {
-        console.log('handleSwitch. elem:', elem);
-        console.log('name:', elem.props.name);
-        console.log('new state:', state);
+    const handlePrescribedTasks = async (data) => {
+        var tempTasks = []
+        for (var i = 0; i < data.length; i++) {
+            var dt = data[i].prescriptionSchedule
+            var msg = data[i].prescriptionMsg
+            var task = data[i].prescriptionType
+            var curTask = { "dateAndTime": dt, "prescribedAction": "" }
+            if (task === "Medication") {
+                curTask.prescribedAction = "Remind patient to take " + msg
+            }
+            else if (task === "Therapy") {
+                curTask.prescribedAction = "Remind patient to attend " + msg + " therapy lesson"
+            }
+            else if (task === "Diet") {
+                curTask.prescribedAction = "Remind patient to eat " + msg
+            }
+            else {
+                curTask.prescribedAction = msg
+            }
+            tempTasks.push(curTask)
+        }
+        setPrescribedTasks(tempTasks)
+    }
+    const handleNewPrescription = async () => {
+        // console.log(prescriptionMsg)
+        // console.log(prescriptionType)
+        // console.log(prescriptionSchedule.toLocaleString())
+
+        if (prescriptionMsg != "") {
+            try {
+                let token = await validateToken();
+                if (token !== 0) {
+                    console.log(userData.user.username)
+                    const body = { username: userData.user.username, patientname: "maurodragone", prescriptionMsg: prescriptionMsg, prescriptionSchedule: prescriptionSchedule.toLocaleString(), prescriptionType: prescriptionType }
+                    const res = await Axios.post("/api/telecare/prescription/new",
+                        body,
+                        { headers: { "x-auth-token": token } }
+                    )
+                    handlePrescribedTasks(res.data)
+                    setSuccessNotice("Task to the robot assigned successfully")
+                }
+            } catch (err) {
+                setErrorNotice("Could not assign task to the robot")
+            }
+        }
+        else {
+            setErrorNotice("Prescription details was not specified")
+        }
+
+
     }
 
-    const setBaseToolTip = () => {
-        return "Control the speed of the robot's base"
+    const handleDisconnect = async() =>{
+        var iframeItem = iframeContainer.current.contentWindow;
+        // console.log(document.getElementById("iframeTelecallContainer").contentWindow.getElementById("gobackTelecareCall").click())
+        // iframeItem.contentWindow.getElementById("gobackTelecareCall").click()
+        iframeItem.postMessage("STOPCALL","*")
     }
-
-    const sendSpeechSignal = () => {
-        socket.emit("frontendspeechdata", speech)
+    
+    const handleConnect = async() =>{
+        var iframeItem = iframeContainer.current.contentWindow;
+        const roomsize=iframeItem.localStorage.getItem("roomsize")
+        console.log(roomsize)
+        iframeItem.postMessage("STARTCALL","*")
     }
-    const sendSpeechSignalPredefined = (words) => {
-        socket.emit("frontendspeechdata", words)
-    }
-
     return (
         <Fragment>
             {userRobots ? <Fragment>
@@ -233,37 +355,25 @@ export default function Dashboard() {
                 {headLeftPress && handleMovement("head_left")}
                 {headRightPress && handleMovement("head_right")}
 
-                {upClick && handleMovement("forward")}
 
-                {isDesktopOrLaptop?(
+                {isDesktopOrLaptop ? (
                     <Row>
-                    <Col md="8" className="pr-1" >
-                        <div >
-                            <ResponsiveEmbed aspectRatio="16by9" >
-                                <iframe src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera"/>
-                                {/* <embed type="image/svg+xml" src={embedSource} /> */}
-                            </ResponsiveEmbed>
-                        </div>
-                        {/* <Card className="dashboard-box-design mt-4" >
-                            <Card.Header className="dashboard-box-design-card-header">Heartbeat monitor</Card.Header>
-                            {/* <Card.Body style={{ margin: 'auto' }}> 
-                            <Card.Body style={{ margin: '2px' }}>
-                                <Button className="mr-2 ml-2"><FaQuidditch /> Create instant task</Button>
-                                <Button className="mr-2 ml-2"><FaCalendarAlt /> Schedule task</Button>
-                                <Button className="mr-2 ml-2"><FaCogs /> Manage task schedule</Button>
+                        <Col md="8" className="pr-1" >
+                            <div >
+                                <ResponsiveEmbed aspectRatio="16by9" >
+                                    <iframe id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
+                                    
+                                </ResponsiveEmbed>
+                            </div>
 
+                        </Col>
+                        <Col md="4" className="pl-1 scroll-column">
 
-                            </Card.Body>
-
-                        </Card> */}
-                    </Col>
-                    <Col md="4" className="pl-1">
-                        
-                        <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history}/>
-                        <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory}/>
-                    </Col>
-                </Row>
-                ):(
+                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect}/>
+                            <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
+                        </Col>
+                    </Row>
+                ) : (
                     <div class="no-robot-container">
                         <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>
                             Device not supported
@@ -271,11 +381,11 @@ export default function Dashboard() {
                         <div style={{ color: '#c0c0c0', fontSize: '2rem', textTransform: 'uppercase', fontWeight: '900' }}>
                             Please use a laptop/desktop to run this application
                         </div>
-                        
+
                     </div>
                 )}
 
-                
+
             </Fragment>
                 :
                 <Fragment>

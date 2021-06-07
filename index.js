@@ -42,7 +42,7 @@ app.use((req, res, next) => {
 // set up routes
 app.use("/api/robots", require("./routes/robotRouter"));
 app.use("/api/users", require("./routes/userRouter"));
-app.use("/api/zoom", require("./routes/ZoomRouter"));
+app.use("/api/telecare", require("./routes/TelecareRouter"));
 
 app.get("*", function (req, res) {
   res.sendFile('index.html', { root });
@@ -58,7 +58,8 @@ const server = app.listen(PORT, () => console.log(`The server has started on por
 
 
 
-const io = socketio(server,{pingTimeout: 0, origins: '*:*'})
+const io = socketio(server,{pingTimeout: 0, origins:"*:*",
+allowEIO3: true})
 
 let interval;
 
@@ -85,7 +86,6 @@ io.on("connection", (socket) => {
 
   socket.on("frontendspeechdata",function(data){
     console.log(data)
-    
     socket.broadcast.emit("FROMNODESPEECHAPI",data)
   })
 

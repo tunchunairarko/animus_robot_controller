@@ -1,16 +1,12 @@
 import React, { Fragment, useState, useEffect } from 'react'
 import { Nav, Navbar, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { FaGem, } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
-import { useDidMount } from "react-hooks-lib";
 import DropdownList from "react-widgets/DropdownList";
 import "react-widgets/styles.css";
-import { AiFillApi, AiOutlineDisconnect } from "react-icons/ai";
 import { RiSignalWifiOffLine } from "react-icons/ri";
-import Logo from "../../assets/logo.png"
 import { FcEmptyBattery } from "react-icons/fc";
 
-export default function ModuleHeader({ moduleName }) {
+export default function ModuleHeader() {
 
     const [curTime, setCurTime] = useState();
     const [dispName, setDispName] = useState("");

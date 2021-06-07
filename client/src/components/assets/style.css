@@ -300,3 +300,12 @@ body{
   :is(.nav) a:hover{
       border:none;
   }
+
+  .scroll-column {
+    height: calc(100vh - 110px);
+    overflow-y: scroll;
+}
+.btn:focus,.btn:active{
+    box-shadow: none!important;
+  
+  }

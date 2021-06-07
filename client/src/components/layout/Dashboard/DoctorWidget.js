@@ -44,7 +44,7 @@ export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
                     <Row >
                         <Col sm="12" >
                             <Tabs defaultActiveKey="patientProfile" transition={false} id="noanim-tab-example">
-                                <Tab eventKey="patientProfile" title="Prescribed guidelines" className="mt-4">
+                                <Tab eventKey="patientProfile" title="Robot's schedule" className="mt-4">
                                     <BootstrapTable
                                         pagination={paginationFactory(options)}
                                         keyField="id"

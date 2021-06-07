@@ -1,7 +1,7 @@
 import React, {Fragment} from 'react'
 import { Row, Col, Card} from 'react-bootstrap'
 import "../../../components/assets/style.css";
-import { FaClock, FaUndo } from 'react-icons/fa';
+import { FaClock } from 'react-icons/fa';
 
 
 export default function DashCard({title, value, image}) {
