@@ -67,13 +67,10 @@ io.on("connection", (socket) => {
   console.log("New client connected");
 
   socket.on("pythondata",function(frame){
-    // console.log(data)
+    
     var buff = Buffer.from(frame).toString()
     let base64data = buff.toString('base64');
-    
-    // var ret = Object.assign({}, data, {
-    //   frame: Buffer.from(data.frame, 'base64').toString() // from buffer to base64 string
-    // })
+   
     socket.broadcast.emit("FROMPYAPI",base64data)
     
   })
@@ -94,6 +91,10 @@ io.on("connection", (socket) => {
     
     socket.broadcast.emit("FROMREMOTEROBOT",data)
     
+  })
+  socket.on("ANIMUSFPS",function(data){
+    console.log(data)
+    socket.broadcast.emit("FPSDATA",data)
   })
 
 });

@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
 import Axios from "axios";
-import { ResponsiveEmbed, Row, Col, Button } from 'react-bootstrap'
+import { ResponsiveEmbed, Row, Col, Button,Image } from 'react-bootstrap'
 import "../../../components/assets/style.css";
 import { FaPlusCircle } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
@@ -15,6 +15,7 @@ import { useMediaQuery } from 'react-responsive'
 import ControlPanel from "./ControlPanel"
 import { useHistory } from "react-router-dom";
 import DoctorWidget from "./DoctorWidget"
+import Offline from "../../assets/offline-background.gif";
 
 const socket = io();
 
@@ -69,7 +70,7 @@ export default function Dashboard() {
 
     useEffect(()=>{
         const sendKeySignal = async() =>{
-            if(clickVal!==0 && keyboardNav){
+            if(clickVal!==0 && localStorage.getItem("roomsize")>0){
                 console.log(clickVal)
                 socket.emit("frontenddata",clickVal)
             }
@@ -132,6 +133,12 @@ export default function Dashboard() {
                 { "dateAndTime": "11 May", "temperature": "37.3", "heartRate": "92", "bloodPressure": "121/75" },
                 { "dateAndTime": "12 May", "temperature": "37.4", "heartRate": "76", "bloodPressure": "122/85" },
             ])
+            if(localStorage.getItem("roomsize")===0){
+                var iframeItem = iframeContainer.current.contentWindow;
+                // const roomsize=iframeItem.localStorage.getItem("roomsize")
+                // console.log(roomsize)
+                iframeItem.postMessage("DONTSTARTCALL","*")
+            }
             
         }
         const handler = async(e) => {
@@ -211,7 +218,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         const getData = async (e) => {
-            if (toggleState == true) {
+            if (toggleState === true) {
                 let token = localStorage.getItem("auth-token");
                 if (token == null) {
                     localStorage.setItem("auth-token", "");
@@ -271,7 +278,7 @@ export default function Dashboard() {
 
 
     const handleMovement = (data) => {
-        if(keyboardNav){
+        if(keyboardNav && localStorage.getItem("roomsize")>0){
             socket.emit("frontenddata", data)
         }
     }
@@ -336,10 +343,12 @@ export default function Dashboard() {
     }
     
     const handleConnect = async() =>{
-        var iframeItem = iframeContainer.current.contentWindow;
-        const roomsize=iframeItem.localStorage.getItem("roomsize")
-        console.log(roomsize)
-        iframeItem.postMessage("STARTCALL","*")
+        if(localStorage.getItem("roomsize")>0){
+            var iframeItem = iframeContainer.current.contentWindow;
+            // const roomsize=iframeItem.localStorage.getItem("roomsize")
+            // console.log(roomsize)
+            iframeItem.postMessage("STARTCALL","*")
+        }
     }
     return (
         <Fragment>
@@ -361,8 +370,14 @@ export default function Dashboard() {
                         <Col md="8" className="pr-1" >
                             <div >
                                 <ResponsiveEmbed aspectRatio="16by9" >
-                                    <iframe id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
-                                    
+                                    {/* {
+                                        localStorage.getItem("roomsize")>0? (
+                                            <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
+                                        ):(
+                                            <Image src={Offline} />
+                                        )
+                                    }                                     */}
+                                    <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
                                 </ResponsiveEmbed>
                             </div>
 

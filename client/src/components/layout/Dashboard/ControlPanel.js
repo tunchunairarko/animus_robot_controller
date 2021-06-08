@@ -19,8 +19,8 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setP
     )
     const [vitalData,setVitalData] = useState()
     const onRefreshClicked = () => {
-        console.log("hi")
-        history.push("/dashboard")
+        // history.push("/dashboard")
+        document.location.reload()
     }
     
     return (

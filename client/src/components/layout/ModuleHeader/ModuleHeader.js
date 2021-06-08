@@ -63,7 +63,7 @@ export default function ModuleHeader() {
                         </OverlayTrigger>
                         <OverlayTrigger placement="bottom" overlay={<Tooltip >Disconnect</Tooltip>}>
                             <Button variant="danger"><AiOutlineDisconnect /></Button>
-                        </OverlayTrigger>                     */}
+                        </OverlayTrigger>*/}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
