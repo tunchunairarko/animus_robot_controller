@@ -7,7 +7,7 @@ import { RiSensorFill } from "react-icons/ri";
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setPrescriptionMsg, setPrescriptionType,prescriptionType, prescriptionSchedule, setPrescriptionSchedule,handleNewPrescription,obstacleAv,setObstacleAv,setClickVal,handleDisconnect,handleConnect }) {
+export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setPrescriptionMsg, setPrescriptionType,prescriptionType, prescriptionSchedule, setPrescriptionSchedule,handleNewPrescription,obstacleAv,setObstacleAv,setClickVal,handleDisconnect,handleConnect,barProgress,vitalData,onPressureMeasurementClicked,onTempMeasurementClicked,onPulseMeasurementClicked }) {
     
     const [dummyRoomData, setDummyRoomData] = useState(
         [
@@ -17,7 +17,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setP
             { "item": "General advice" }
         ]
     )
-    const [vitalData,setVitalData] = useState()
+    
     const onRefreshClicked = () => {
         // history.push("/dashboard")
         document.location.reload()
@@ -112,17 +112,17 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setP
                                         <Popover.Content >
                                             <Col sm="12">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure pulse rate</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" ><FaHeartbeat /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1"  onClick={()=>onPulseMeasurementClicked()}><FaHeartbeat /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure temperature</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1"><FaTemperatureHigh /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={()=>onTempMeasurementClicked()}><FaTemperatureHigh /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure blood pressure</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" ><GiHeartOrgan /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={()=>onPressureMeasurementClicked()}><GiHeartOrgan /> </Button>
                                                 </OverlayTrigger>
                                             </Col>
                                             <Col sm="12" className="mt-2">
-                                                <ProgressBar animated now={45} />
+                                                <ProgressBar animated now={barProgress} min={0} max={100}/>
                                             </Col>
                                             <Col sm="12" className="mt-2 center-content">
                                                 <p>{vitalData}</p>
@@ -131,7 +131,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history,setP
                                         </Popover.Content>
                                     </Popover>
                                 }>
-                                <Button variant="outline-info" className="ml-1 mr-1" onClick={onRefreshClicked}><GiAerialSignal /> Measure vitals</Button>
+                                <Button variant="outline-info" className="ml-1 mr-1" ><GiAerialSignal /> Measure vitals</Button>
                             </OverlayTrigger>
                             <OverlayTrigger
                                 placement="top"

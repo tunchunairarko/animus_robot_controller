@@ -33,7 +33,7 @@ export default function Admin() {
 
     return (
         <Fragment>
-            <Sidebar />
+            {/* <Sidebar /> */}
             <main style={{overflow:"hidden"}}>
                 <div className="container-fluid main-body">
                     <ModuleHeader moduleName={"Dashboard"} />

@@ -15,6 +15,7 @@ import { useMediaQuery } from 'react-responsive'
 import ControlPanel from "./ControlPanel"
 import { useHistory } from "react-router-dom";
 import DoctorWidget from "./DoctorWidget"
+import delay from "delay";
 import Offline from "../../assets/offline-background.gif";
 
 const socket = io();
@@ -61,6 +62,9 @@ export default function Dashboard() {
     const [prescriptionMsg, setPrescriptionMsg] = useState("");
     const [prescriptionType, setPrescriptionType] = useState("Medication")
     const [prescriptionSchedule, setPrescriptionSchedule] = useState(new Date())
+
+    const [barProgress,setBarProgress]=useState(0)
+    const [vitalData,setVitalData] = useState()
 
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
@@ -350,6 +354,31 @@ export default function Dashboard() {
             iframeItem.postMessage("STARTCALL","*")
         }
     }
+    const onPressureMeasurementClicked= ()=>{
+        
+        var completionTime = 7 + Math.random() * (4 - 1)
+        for(var i=0; i<completionTime; i++){
+            delay(1000)
+            var t = barProgress + (Math.floor(100 / completionTime));
+            console.log(t);
+            setBarProgress(t);
+        }
+        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
+        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
+        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        setTimeout(() => {
+            var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
+            var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
+            setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        }, completionTime * 1000 + 1)
+
+    }
+    const onPulseMeasurementClicked= async()=>{
+        console.log("started")
+    }
+    const onTempMeasurementClicked= async()=>{
+        console.log("started")
+    }
     return (
         <Fragment>
             {userRobots ? <Fragment>
@@ -384,7 +413,8 @@ export default function Dashboard() {
                         </Col>
                         <Col md="4" className="pl-1 scroll-column">
 
-                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect}/>
+                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData}/>
+
                             <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
                         </Col>
                     </Row>
