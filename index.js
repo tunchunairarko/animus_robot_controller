@@ -96,6 +96,21 @@ io.on("connection", (socket) => {
     console.log(data)
     socket.broadcast.emit("FPSDATA",data)
   })
+  socket.on("PEPPERBATTERY",function(data){
+    console.log(data)
+    socket.broadcast.emit("BATTERYDATA",data)
+  })
+  socket.on("PEPPERGAZE",function(data){
+    console.log(data)
+    socket.broadcast.emit("GAZEDATA",data)
+  })
+  socket.on("SONARDATA",function(data){
+    console.log(data)
+    socket.broadcast.emit("TOSONARDATA",data)
+  })
+  socket.on("PEPPERCONTEST",function(data){
+    console.log(data)
+  })
 
 });
 

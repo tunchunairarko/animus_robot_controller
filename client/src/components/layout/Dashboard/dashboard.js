@@ -64,7 +64,7 @@ export default function Dashboard() {
     const [prescriptionSchedule, setPrescriptionSchedule] = useState(new Date())
 
     const [barProgress,setBarProgress]=useState(0)
-    const [vitalData,setVitalData] = useState()
+    const [vitalData,setVitalData] = useState("")
 
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
@@ -256,6 +256,13 @@ export default function Dashboard() {
         getData();
     }, [toggleState]);
 
+    useEffect(()=>{
+        if(vitalData!==""){
+            setSuccessNotice(vitalData)
+            setVitalData("")
+        }
+    },[vitalData])
+
     const validateToken = async (e) => {
         let token = localStorage.getItem("auth-token");
         if (token == null) {
@@ -315,7 +322,7 @@ export default function Dashboard() {
         // console.log(prescriptionType)
         // console.log(prescriptionSchedule.toLocaleString())
 
-        if (prescriptionMsg != "") {
+        if (prescriptionMsg !== "") {
             try {
                 let token = await validateToken();
                 if (token !== 0) {
@@ -354,30 +361,137 @@ export default function Dashboard() {
             iframeItem.postMessage("STARTCALL","*")
         }
     }
-    const onPressureMeasurementClicked= ()=>{
-        
-        var completionTime = 7 + Math.random() * (4 - 1)
-        for(var i=0; i<completionTime; i++){
-            delay(1000)
-            var t = barProgress + (Math.floor(100 / completionTime));
-            console.log(t);
-            setBarProgress(t);
-        }
+    const onPressureMeasurementClicked= async()=>{
+        setBarProgress(0)
+        setVitalData("")
+        // var completionTime = 7 + Math.random() * (4 - 1)
+        var completionTime = 9
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(20);
+        }, 1000*(1))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(40);
+        }, 1000*(3))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(60);
+        }, 1000*(5))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(80);
+        }, 1000*(6))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(100);
+        }, 1000*(9))
+        // for(var i=0; i<completionTime; i++){
+        //     // var t = barProgress + (Math.floor(100 / completionTime));
+        //     // eslint-disable-next-line no-loop-func
+        //     setTimeout(() => {                
+        //         // console.log(t);
+        //         setBarProgress(Math.floor(100/completionTime)*i);
+        //     }, 1000*(i+1))            
+        // }
         // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
         // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
         // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
         setTimeout(() => {
-            var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
-            var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
+            setBarProgress(0)
+            var randTopPressureVal = Math.floor(115 + Math.random() * (125 - 115));
+            var randBottomPressureVal = Math.floor(75 + Math.random() * (85 - 75));
             setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
-        }, completionTime * 1000 + 1)
+            
+        }, (completionTime+2) * 1000)
 
     }
     const onPulseMeasurementClicked= async()=>{
-        console.log("started")
+        setBarProgress(0)
+        setVitalData("")
+        // var completionTime = 7 + Math.random() * (4 - 1)
+        var completionTime = 9
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(20);
+        }, 1000*(1))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(40);
+        }, 1000*(3))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(60);
+        }, 1000*(5))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(80);
+        }, 1000*(6))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(100);
+        }, 1000*(9))
+        // for(var i=0; i<completionTime; i++){
+        //     // var t = barProgress + (Math.floor(100 / completionTime));
+        //     // eslint-disable-next-line no-loop-func
+        //     setTimeout(() => {                
+        //         // console.log(t);
+        //         setBarProgress(Math.floor(100/completionTime)*i);
+        //     }, 1000*(i+1))            
+        // }
+        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
+        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
+        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        setTimeout(() => {
+            var randTopPressureVal = Math.floor(75 + Math.random() * (85 - 75));
+            
+            setVitalData(randTopPressureVal.toString() + "BPM" );
+            setBarProgress(0)
+        }, (completionTime+2) * 1000)
+        
     }
     const onTempMeasurementClicked= async()=>{
-        console.log("started")
+        setBarProgress(0)
+        setVitalData("")
+        // var completionTime = 7 + Math.random() * (4 - 1)
+        var completionTime = 9
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(20);
+        }, 1000*(1))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(40);
+        }, 1000*(3))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(60);
+        }, 1000*(5))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(80);
+        }, 1000*(6))
+        setTimeout(() => {                
+            // console.log(t);
+            setBarProgress(100);
+        }, 1000*(9))
+        // for(var i=0; i<completionTime; i++){
+        //     // var t = barProgress + (Math.floor(100 / completionTime));
+        //     // eslint-disable-next-line no-loop-func
+        //     setTimeout(() => {                
+        //         // console.log(t);
+        //         setBarProgress(Math.floor(100/completionTime)*i);
+        //     }, 1000*(i+1))            
+        // }
+        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
+        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
+        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        setTimeout(() => {
+            var randTopPressureVal = Math.floor(37 + Math.random() * (85 - 75),);
+            
+            setVitalData(randTopPressureVal.toString() + "BPM" );
+            setBarProgress(0)
+        }, (completionTime+2) * 1000)
     }
     return (
         <Fragment>
