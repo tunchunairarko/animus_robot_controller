@@ -58,9 +58,11 @@ export default function Dashboard() {
     // const headRightClick = useKeyPress("l");
     const [keyboardNav, setKeyboardNav] = useState(true);
     const [obstacleAv, setObstacleAv] = useState(true);
+    const [faceTrack,setFaceTrack] = useState(true)
 
     const [prescriptionMsg, setPrescriptionMsg] = useState("");
-    const [prescriptionType, setPrescriptionType] = useState("Medication")
+    const [prescriptionType, setPrescriptionType] = useState("")
+    const [urgencyLevel,setUrgencyLevel] = useState("")
     const [prescriptionSchedule, setPrescriptionSchedule] = useState(new Date())
 
     const [barProgress,setBarProgress]=useState(0)
@@ -289,7 +291,7 @@ export default function Dashboard() {
 
 
     const handleMovement = (data) => {
-        if(keyboardNav && localStorage.getItem("roomsize")>0){
+        if(keyboardNav){
             socket.emit("frontenddata", data)
         }
     }
@@ -527,7 +529,7 @@ export default function Dashboard() {
                         </Col>
                         <Col md="4" className="pl-1 scroll-column">
 
-                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData}/>
+                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setUrgencyLevel={setUrgencyLevel} urgencyLevel={urgencyLevel}/>
 
                             <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
                         </Col>

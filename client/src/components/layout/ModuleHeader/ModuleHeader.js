@@ -15,7 +15,7 @@ export default function ModuleHeader() {
 
     const [dummyRoomData, setDummyRoomData] = useState(
         [
-            { "robot": "Pepper (Patient: Mauro Dragone) - Currie, Edinburgh" }
+            { "robot": "Remote User: Mauro Dragone, Currie, Edinburgh" }
         ]
     )
 
@@ -35,7 +35,7 @@ export default function ModuleHeader() {
             <Navbar collapseOnSelect expand="lg" variant="light" bg="light" className="moduleHeader">
                 <Nav style={{ minWidth: "30%" }}>
                     <DropdownList
-                        defaultValue="Pepper (Patient: Mauro Dragone) - Currie, Edinburgh"
+                        defaultValue="Remote User: Mauro Dragone, Currie, Edinburgh"
                         data={dummyRoomData}
                         textField='robot'
                     />
