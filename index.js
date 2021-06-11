@@ -96,18 +96,37 @@ io.on("connection", (socket) => {
     console.log(data)
     socket.broadcast.emit("FPSDATA",data)
   })
-  socket.on("PEPPERBATTERY",function(data){
+  socket.on("BATTERYDATA",function(data){
     console.log(data)
-    socket.broadcast.emit("BATTERYDATA",data)
+    socket.broadcast.emit("TOBATTERYDATA",data)
   })
-  socket.on("PEPPERGAZE",function(data){
+  
+  socket.on("FACETRACKDATA",function(data){
     console.log(data)
-    socket.broadcast.emit("GAZEDATA",data)
+    if(data===0){
+      socket.broadcast.emit("TOFACETRACKDATA",false)
+    }
+    else{
+      if(data===0){
+        socket.broadcast.emit("TOFACETRACKDATA",true)
+      }
+    }
   })
   socket.on("SONARDATA",function(data){
     console.log(data)
     socket.broadcast.emit("TOSONARDATA",data)
   })
+
+  socket.on("SENDFACETRACKSTATUS",function(data){
+    console.log(data)
+    socket.broadcast.emit("RELAYFACETRACKSTATUS",data)
+  })
+
+
+
+
+
+
   socket.on("PEPPERCONTEST",function(data){
     console.log(data)
   })

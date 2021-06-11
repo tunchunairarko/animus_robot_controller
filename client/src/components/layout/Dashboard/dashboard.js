@@ -4,7 +4,7 @@ import { ResponsiveEmbed, Row, Col, Button,Image } from 'react-bootstrap'
 import "../../../components/assets/style.css";
 import { FaPlusCircle } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
-import io  from "socket.io-client";
+import io from "socket.io-client";
 import UserContext from "../../../context/UserContext";
 import 'react-nipple/lib/styles.css';
 import { useAlert } from 'react-alert';
@@ -71,8 +71,19 @@ export default function Dashboard() {
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
     const [successNotice, setSuccessNotice] = useState()
+    const [sonarData,setSonarData] = useState({"front":500,"back":500})
+    // const [faceTrackStatus,setFaceTrackStatus]=useState(0)
 
     const iframeContainer = useRef(null)
+
+    socket.on("TOSONARDATA", data => {
+        console.log(data)
+        setSonarData(data);
+    });
+    socket.on("TOFACETRACKDATA",data=>{
+        console.log(data)
+        setFaceTrack(data)
+    })
 
     useEffect(()=>{
         const sendKeySignal = async() =>{
