@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
     
   })
   socket.on("ANIMUSFPS",function(data){
-    console.log(data)
+    // console.log(data)
     socket.broadcast.emit("FPSDATA",data)
   })
   socket.on("BATTERYDATA",function(data){

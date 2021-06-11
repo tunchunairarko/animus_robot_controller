@@ -58,7 +58,7 @@ export default function Dashboard() {
     // const headRightClick = useKeyPress("l");
     const [keyboardNav, setKeyboardNav] = useState(true);
     const [obstacleAv, setObstacleAv] = useState(true);
-    const [faceTrack,setFaceTrack] = useState(true)
+    const [faceTrack,setFaceTrack] = useState(false)
 
     const [prescriptionMsg, setPrescriptionMsg] = useState("");
     const [prescriptionType, setPrescriptionType] = useState("")
@@ -72,7 +72,7 @@ export default function Dashboard() {
     const [errorNotice, setErrorNotice] = useState()
     const [successNotice, setSuccessNotice] = useState()
     const [sonarData,setSonarData] = useState({"front":500,"back":500})
-    // const [faceTrackStatus,setFaceTrackStatus]=useState(0)
+    const [faceTrackStatus,setFaceTrackStatus]=useState(0)
 
     const iframeContainer = useRef(null)
 
@@ -82,8 +82,17 @@ export default function Dashboard() {
     });
     socket.on("TOFACETRACKDATA",data=>{
         console.log(data)
-        setFaceTrack(data)
+        setFaceTrackStatus(data)
     })
+
+    useEffect(()=>{
+        if(faceTrack===false){
+            socket.emit("SENDFACETRACKSTATUS",0)
+        }
+        else{
+            socket.emit("SENDFACETRACKSTATUS",1)
+        }
+    },[faceTrack])
 
     useEffect(()=>{
         const sendKeySignal = async() =>{

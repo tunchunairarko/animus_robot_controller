@@ -87,10 +87,10 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                             <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
                         </Col>
                     </Row>
-                    <Row className="mt-2">
+                    {/* <Row className="mt-2">
                         <Col sm="6" className="p-5">s</Col>
                         <Col sm="6" className="p-5"></Col>
-                    </Row>
+                    </Row> */}
                 </Card.Body>
             </Card >
             <Card className="dashboard-box-design mb-3" >
