@@ -78,22 +78,22 @@ export default function App() {
                     }
                 }catch(err){
                     console.log(err)
-                    // setUserData({
-                    //     token:undefined,
-                    //     user:undefined
-                    //   });
-                    // localStorage.setItem("auth-token","");
-                    // setCookie("username", "", {
-                    //     path: "/"
-                    // });
+                    setUserData({
+                        token:undefined,
+                        user:undefined
+                      });
+                    localStorage.setItem("auth-token","");
+                    setCookie("username", "", {
+                        path: "/"
+                    });
 
-                    // setCookie("email", "", {
-                    //     path: "/"
-                    // });
-                    // setCookie("displayName", "", {
-                    //     path: "/"
-                    // });
-                    // window.location.replace("/login", { path: '/' });
+                    setCookie("email", "", {
+                        path: "/"
+                    });
+                    setCookie("displayName", "", {
+                        path: "/"
+                    });
+                    window.location.replace("/login", { path: '/' });
                 }
                 // const tokenResponse = await Axios.post(
                 //     `/api/users/tokenIsValid`,
@@ -164,7 +164,7 @@ export default function App() {
                     <Switch>
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
                         <PublicRoute restricted={true} component={Register} path="/register" exact />
-                        <PrivateRoute component={Admin} path="/dashboard" />
+                        <PrivateRoute component={Admin} path="/dashboard" exact/>
                         <PrivateRoute component={Admin} path="/settings" exact/>
                         <PrivateRoute component={Admin} path="/robots/add" exact/>
                         <PublicRoute restricted={true} component={Admin} path="/" exact />

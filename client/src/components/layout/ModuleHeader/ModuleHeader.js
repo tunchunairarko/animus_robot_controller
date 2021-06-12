@@ -1,20 +1,25 @@
-import React, { Fragment, useState, useEffect } from 'react'
+import React, { Fragment, useState, useEffect,useContext } from 'react'
 import { Nav, Navbar, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { useCookies } from "react-cookie";
+import { useHistory } from "react-router-dom";
 import DropdownList from "react-widgets/DropdownList";
 import "react-widgets/styles.css";
 import { RiSignalWifiOffLine } from "react-icons/ri";
+import { FaPowerOff } from "react-icons/fa";
 import { FcEmptyBattery, FcLowBattery,FcMiddleBattery,FcFullBattery, FcHighBattery } from "react-icons/fc";
 import io from "socket.io-client";
+import UserContext from "../../../context/UserContext";
 const socket = io();
 
 export default function ModuleHeader() {
-
+    const { setUserData } = useContext(UserContext);
     const [curTime, setCurTime] = useState();
     const [dispName, setDispName] = useState("");
     // const { userData } = useContext(UserContext);
-    const [cookies] = useCookies(["user"]);
+    const [cookies, setCookie] = useCookies(["user"]);
+    const history = useHistory();
     const [batteryLevel,setBatteryLevel]=useState(0)
+    const [batteryRawdData,setBatteryRawData]=useState(0)
     const [dummyRoomData, setDummyRoomData] = useState(
         [
             { "robot": "Remote User: Mauro Dragone, Currie, Edinburgh" }
@@ -22,6 +27,7 @@ export default function ModuleHeader() {
     )
     
     socket.on("TOBATTERYDATA", data => {
+        setBatteryRawData(data)
         if(data===0){
             setBatteryLevel(0)
         }
@@ -50,6 +56,25 @@ export default function ModuleHeader() {
         }, 1000)
     })
 
+    const handleLogout = () =>{
+        setUserData({
+            token: undefined,
+            user: undefined
+        });
+        localStorage.setItem("auth-token", "");
+        setCookie("username", "", {
+            path: "/"
+        });
+        setCookie("email", "", {
+            path: "/"
+        });
+        setCookie("displayName", "", {
+            path: "/"
+        });
+        
+        history.go(0)
+    }
+
     return (
         <Fragment>
             <Navbar collapseOnSelect expand="lg" variant="light" bg="light" className="moduleHeader">
@@ -75,7 +100,7 @@ export default function ModuleHeader() {
                         <OverlayTrigger placement="bottom" overlay={<Tooltip >Telecare connection strength</Tooltip>}>
                             <Button variant="light" className="mr-2"><RiSignalWifiOffLine /></Button>
                         </OverlayTrigger>
-                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Robot's battery level</Tooltip>}>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Robot's battery: {batteryRawdData}%</Tooltip>}>
                             <Button variant="light" className="mr-2">
                                 {
                                     batteryLevel===0?<FcEmptyBattery />:<div style={{display:"none"}}></div>
@@ -93,6 +118,9 @@ export default function ModuleHeader() {
                                     batteryLevel===4?<FcFullBattery />:<div style={{display:"none"}}></div>
                                 }
                             </Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="bottom" overlay={<Tooltip >Disconnect/Logout </Tooltip>}>
+                            <Button variant="success" className="mr-2" onClick={()=>handleLogout()}><FaPowerOff /></Button>
                         </OverlayTrigger>
                         {/* <OverlayTrigger placement="bottom" overlay={<Tooltip >Connect </Tooltip>}>
                             <Button variant="success" className="mr-2"><AiFillApi /></Button>
