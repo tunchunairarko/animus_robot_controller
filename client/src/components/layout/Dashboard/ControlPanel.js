@@ -1,14 +1,13 @@
 import React, { Fragment, useState } from 'react'
 import { Card, Col, Button, Row, Badge, ToggleButton, ButtonGroup, OverlayTrigger, Tooltip, Popover, Form, ProgressBar } from 'react-bootstrap'
 import { FaArrowAltCircleDown, FaArrowAltCircleRight, FaArrowCircleLeft, FaArrowCircleUp, FaMinusCircle, FaRedo, FaStopCircle, FaUndo, FaHeartbeat, FaTemperatureHigh } from 'react-icons/fa';
-import { MdGames, MdRefresh, MdSend, MdFace } from "react-icons/md";
-import { AiFillApi, AiOutlineDisconnect, AiFillInfoCircle, AiFillAlert } from "react-icons/ai";
-import { RiSensorFill } from "react-icons/ri";
-import { FcLowPriority,FcMediumPriority,FcHighPriority } from "react-icons/fc";
+import { MdRefresh, MdSend, MdFace } from "react-icons/md";
+import { AiFillInfoCircle} from "react-icons/ai";
+
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ keyboardNav, setKeyboardNav, history, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, obstacleAv, setObstacleAv, setClickVal, handleDisconnect, handleConnect, barProgress, vitalData, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack,urgencyLevel,setUrgencyLevel }) {
+export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, vitalData, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack,prescriptionPriority,setPrescriptionPriority, setShowHelp }) {
 
     const [prescriptionData, setPrescriptionData] = useState(
         [
@@ -123,7 +122,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                                 <Button variant="outline-info" className="ml-1 mr-1" onClick={onRefreshClicked}><MdRefresh />Refresh</Button>
                             </OverlayTrigger>
                             <OverlayTrigger placement="top" overlay={<Tooltip >Help</Tooltip>}>
-                                <Button variant="outline-info" className="ml-1 mr-1" onClick={onRefreshClicked}><AiFillInfoCircle /> Help</Button>
+                                <Button variant="outline-info" className="ml-1 mr-1" onClick={()=>setShowHelp(true)}><AiFillInfoCircle /> Help</Button>
                             </OverlayTrigger>
                             <OverlayTrigger placement="top" overlay={<Tooltip >Activate/disactivate head movement while tracking face</Tooltip>}>
                                 <ButtonGroup toggle >
@@ -140,13 +139,13 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                                         <Popover.Content >
                                             <Col sm="12">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure pulse rate</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={() => onPulseMeasurementClicked()}><FaHeartbeat /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onPulseMeasurementClicked}><FaHeartbeat /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure temperature</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={() => onTempMeasurementClicked()}><FaTemperatureHigh /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onTempMeasurementClicked}><FaTemperatureHigh /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure blood pressure</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={() => onPressureMeasurementClicked()}><GiHeartOrgan /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onPressureMeasurementClicked}><GiHeartOrgan /> </Button>
                                                 </OverlayTrigger>
                                             </Col>
                                             <Col sm="12" className="mt-2">
@@ -184,7 +183,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                                             <Col sm="12" className="mt-2">
                                                 <DatePicker
                                                     value={prescriptionSchedule}
-                                                    onChange={value => setPrescriptionSchedule(value)}
+                                                    onChange={(value) => setPrescriptionSchedule(value)}
                                                     defaultValue={prescriptionSchedule}
                                                     includeTime
                                                 />
@@ -195,8 +194,8 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                                                     placeholder="Set priority level"
                                                     data={urgencyData}
                                                     textField='item'
-                                                    value={urgencyLevel}
-                                                    onChange={(value) => setUrgencyLevel(value.item)}
+                                                    value={prescriptionPriority}
+                                                    onChange={(value) => setPrescriptionPriority(value.item)}
                                                 />
                                             </Col>
                                             <Col sm="12" className="mt-2">
@@ -209,7 +208,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
                                                 </Form.Group>
                                             </Col>
                                             <Col sm="12" className="mt-2">
-                                                <Button variant="outline-info" block onClick={() => handleNewPrescription()}><MdSend /> Send to the robot </Button>
+                                                <Button variant="outline-info" block onClick={ handleNewPrescription}><MdSend /> Send to the robot </Button>
                                             </Col>
                                         </Popover.Content>
                                     </Popover>
@@ -224,6 +223,7 @@ export default function ControlPanel({ keyboardNav, setKeyboardNav, history, set
 
                 </Card.Body>
             </Card >
+            
         </Fragment>
     )
 }

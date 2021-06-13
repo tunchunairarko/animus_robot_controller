@@ -43,18 +43,44 @@ export default function App() {
                 setCookie("displayName", "", {
                     path: "/"
                 });
-                setShowHeader(true)
+                
                 // history.push("/login");
             }
             else{
                 var tokenError=false;
                 const newLocal = { headers: { "x-auth-token": token } };
-                try{
-                    const tokenResponse = await Axios.post(
-                        `/api/users/tokenIsValid`,
-                        null,
-                        newLocal
-                    )
+                const tokenResponse = await Axios.post(
+                    `/api/users/tokenIsValid`,
+                    null,
+                    newLocal
+                ).catch(function(error){
+                    if (error.response) {
+                        tokenError=true;   
+                    } 
+                    
+                })
+                if(tokenError){
+                    setUserData({
+                        token:undefined,
+                        user:undefined
+                      });
+                    localStorage.setItem("auth-token","");
+                    setCookie("username", "", {
+                        path: "/"
+                    });
+
+                    setCookie("email", "", {
+                        path: "/"
+                    });
+                    setCookie("displayName", "", {
+                        path: "/"
+                    });
+                    window.location.replace("/login", { path: '/' });
+                    
+                    // logout();
+                }
+                // console.log(tokenResponse)
+                else{
                     if(tokenResponse.data){
                         const userRes = await Axios.get(
                             `/api/users/`,{headers:{"x-auth-token":token,'Content-Type': 'application/json;charset=UTF-8'}},
@@ -76,97 +102,24 @@ export default function App() {
                         });
                         
                     }
-                }catch(err){
-                    console.log(err)
-                    setUserData({
-                        token:undefined,
-                        user:undefined
-                      });
-                    localStorage.setItem("auth-token","");
-                    setCookie("username", "", {
-                        path: "/"
-                    });
-
-                    setCookie("email", "", {
-                        path: "/"
-                    });
-                    setCookie("displayName", "", {
-                        path: "/"
-                    });
-                    window.location.replace("/login", { path: '/' });
+                    
                 }
-                // const tokenResponse = await Axios.post(
-                //     `/api/users/tokenIsValid`,
-                //     null,
-                //     newLocal
-                // ).catch(function(error){
-                //     if (error.response) {
-                //         tokenError=true;   
-                //     } 
-                    
-                // })
-                // if(tokenError){
-                //     setUserData({
-                //         token:undefined,
-                //         user:undefined
-                //       });
-                //     localStorage.setItem("auth-token","");
-                //     setCookie("username", "", {
-                //         path: "/"
-                //     });
-
-                //     setCookie("email", "", {
-                //         path: "/"
-                //     });
-                //     setCookie("displayName", "", {
-                //         path: "/"
-                //     });
-                //     window.location.replace("/login", { path: '/' });
-                    
-                //     // logout();
-                // }
-                // // console.log(tokenResponse)
-                // else{
-                //     if(tokenResponse.data){
-                //         const userRes = await Axios.get(
-                //             `/api/users/`,{headers:{"x-auth-token":token,'Content-Type': 'application/json;charset=UTF-8'}},
-                //         )
-                //         // console.log(userRes.data)
-                //         setUserData({
-                //             token,
-                //             user: userRes.data,
-                //         });
-                //         setCookie("username", userRes.data.username, {
-                //             path: "/"
-                //         });
-
-                //         setCookie("email", userRes.data.email, {
-                //             path: "/"
-                //         });
-                //         setCookie("displayName", userRes.data.displayName, {
-                //             path: "/"
-                //         });
-                        
-                //     }
-                    
-                // }
                 
             }
         }
         checkLoggedIn();
-    });
+    },[]);
 
     return (
         <Fragment>
             <BrowserRouter>
-                <UserContext.Provider value={{ userData, setUserData, tempEmail, tempPassword }}>                    
-                    
+                <UserContext.Provider value={{ userData, setUserData, tempEmail, tempPassword }}> 
                     <Switch>
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
                         <PublicRoute restricted={true} component={Register} path="/register" exact />
-                        <PrivateRoute component={Admin} path="/dashboard" exact/>
-                        <PrivateRoute component={Admin} path="/settings" exact/>
-                        <PrivateRoute component={Admin} path="/robots/add" exact/>
+                        <PrivateRoute component={Admin} path="/dashboard" strict/>
+                        <PrivateRoute component={Admin} path="/settings" />
+                        <PrivateRoute component={Admin} path="/robots/add" />
                         <PublicRoute restricted={true} component={Admin} path="/" exact />
                         
                     </Switch>

@@ -1,190 +1,156 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Modal, Button, Row, Image } from 'react-bootstrap'
-import Axios from "axios";
-import BootstrapTable from 'react-bootstrap-table-next';
-import Loader from 'react-loader-spinner';
+import { Button, Row, Image, Col, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import "../../../components/assets/style.css"
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-import { useAlert } from 'react-alert';
-
+import { IoMdBody } from "react-icons/io";
+import { AiFillRobot } from "react-icons/ai";
+import { FiPhoneCall } from "react-icons/fi";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
 // const SearchModal = ({ show, handleClose, searchQuery, onProductChosen, marketplace }) => {
-export default function AnimusRobotModal ({ show, handleClose, email, password, onRobotChosen }) {
-    const alert = useAlert()
-    const [userChosenRobot, setUserChosenRobot] = useState({});
-    const [loaderVisible, setLoaderVisible] = useState(true);
-    //popup theke data niye ekhon form e boshaite hobe
-    // const [currentProductData, setCurrentProductData] = useState({
-    //     productList: undefined,
-    // });
-    
-    const [currentRobotData,setCurrentRobotData] =useState({
-        robotList: undefined
-    })
+const HelpModal = ({ showHelp, setShowHelp }) => {
 
-    useEffect(() => {
-        const getRobotList = async () => {            
-            if(show===true){
-                if(!currentRobotData.robotList){
-                    setLoaderVisible(true)
-                    if (email && password) {
-                        // console.log(searchQuery)
-                        let token = localStorage.getItem("auth-token");
-                        if (token == null) {
-                            localStorage.setItem("auth-token", "");
-                            token = "";
-                        }
-                        else {
-                            const tokenResponse = await Axios.post(
-                                "/api/users/tokenIsValid",
-                                null,
-                                { headers: { "x-auth-token": token } }
-                            );
-                            // console.log(searchQuery)
-                            
-                            if (tokenResponse.data) {
-                                const body = { email:email, password:password, mode:"live" };
-                                // const body = { searchQuery };
-                                try{
-                                    const robotRes = await Axios.post(
-                                        "/api/robots/robotlist", 
-                                        body,
-                                        { headers: { "x-auth-token": token } }
-                                    )
-                                    
-                                    if(robotRes.data && robotRes.data.length>0){
-                                        setCurrentRobotData({
-                                            robotList: robotRes.data,
-                                        });
-                                        
-                                        setLoaderVisible(false);
-                                    }
-                                    else{
-                                        handleClose(currentRobotData,loaderVisible)
-                                        alert.error(<div style={{ 'font-size': '0.70em' }}>Error retrieving robots</div>)
-                                    }
-                                }catch(error){
-                                    console.log(error)
-                                    handleClose(currentRobotData,loaderVisible)
-                                    alert.error(<div style={{ 'font-size': '0.70em' }}>Error retrieving robots</div>)
-                                }
-                            }
-        
-                        }
-                    }
-                }
-            }
-        }        
-        getRobotList();
-    },[show])
-    
-    // this will automatically retrieve if only 1 robot is available
-    // useEffect(() =>{
-    //     const nandakore = async () => {
-            
-    //         if(currentRobotData.robotList){
-    //             if(currentRobotData.robotList.length==1){
-    //                 onRobotChosen(currentRobotData.robotList[0])
-    //                 setCurrentRobotData({
-    //                     robotList: undefined,
-    //                 });
-    //                 handleClose(currentRobotData,loaderVisible);
-    //             }
-    //         }
-            
-    //     }
-    //     nandakore();
-    // },[currentRobotData])
-
-    
-    const finishAll = (data) =>{
-        // console.log(data)
-        onRobotChosen(data)
-        setCurrentRobotData({
-            robotList: undefined,
-        });
-        handleClose(currentRobotData,loaderVisible);
+    const handleCloseHelp = () => {
+        setShowHelp(() => false)
     }
 
-    const chooseRobot = async (e) => {
-        e.preventDefault();
-        if (userChosenRobot) {
-            finishAll(userChosenRobot)
-            // const searchQuery = userChosenProduct['robot_id'];
-            // const body = { searchQuery };
-            // try{
-            //     const productRes = await Axios.post(
-            //         "/api/products/robotlist", 
-            //         body
-            //     ).then((result)=> finishAll(result.data))
-                
-            // }catch(error){
-            //     console.log(error)
-            //     onProductChosen(userChosenProduct)
-            //     setCurrentProductData({
-            //         productList: undefined,
-            //     });
-            //     handleClose(currentProductData,loaderVisible);
-            // }
-            
-        }
-    }
-    
-
-    const selectRow = {
-        mode: 'radio',
-        clickToSelect: true,
-        onSelect: (row, isSelect, rowIndex, e) =>{setUserChosenRobot(currentRobotData.robotList[rowIndex])},
-        style: (row, rowIndex) => {
-          const backgroundColor = rowIndex > 1 ? '#00BFFF' : '#00FFFF';
-          return { backgroundColor };
-        }
-      };
-
-      const columns=[
-        {
-            dataField: 'image',
-            text: 'Image',
-            formatter:imageFormatter
-        },
-        {
-            dataField: 'robot_name',
-            text: 'Name'
-        },
-        {
-            dataField: 'ipAddress',
-            text: 'IP Address'
-        },
-        {
-            dataField: 'location',
-            text: 'Location'
-        },
-        {
-            dataField: 'robot_id',
-            text: 'Robot ID'
-        }
-    ]
-    function imageFormatter(cell, row){
-        return (<Image src={cell} fluid/>) ;
-      }
-      
     return (
         <Fragment>
-            <Modal size="lg" show={show} onHide={(e)=>handleClose()} backdrop="static" keyboard={false} centered>
-                <Modal.Header closeButton>
+            <Modal open={showHelp} onClose={handleCloseHelp} centered>
+                {/* <Modal.Header >
                     <Modal.Title id="searchResTitle">How to use HWU Telecare</Modal.Title>
+
+                </Modal.Header> */}
+                <div className="container mt-3" >
+                    <Row style={{ overflowY: "scroll", maxHeight: "550px" }}>
+                        <Col sm="12">
+                            <h5 className="helph5header">How to use HWU Telecare</h5>
+                            <p>Here you will find all the details on how to use HWU Telecare to connect to the telepresence robot and use it. Use the quick links at the top of this popup to jump to a particular section.</p>
+                        </Col>
+                        <Col sm="12" id="helptelecall" className="mt-3">
+                            <h5 className="helph5header">How to connect to the robot & join teleconference call</h5>
+                            <p className="mt-3">
+                                <strong>1.</strong> Click the "join" button on the screen. Once you click join you will establish a connection with the robot.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623529738/HWU_Telecare/Instruction_screen-1_xcrpmq.jpg" />
+                            <p className="mt-3">
+                                <strong>2.</strong> Type your name and click "Send" to send a call request to the remote user with the robot. If the remote user accepts your call, you will be able to start your communication.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623532490/HWU_Telecare/Instruction_screens-2_nowxsh.jpg" />
+                        </Col>
+                        <Col sm="12" id="helpbodycontrols" className="mt-3">
+
+                            <h5 className="helph5header">How to move using the robot</h5>
+                            <p className="mt-3">
+                                <strong>Using keyboard: </strong> Follow the instructions on the image below to move around the remote location using the robot.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623536435/HWU_Telecare/Instruction_screens-5_trv8ee.jpg" />
+                            <p className="mt-3">
+                                <strong>Using on-screen controls: </strong> Follow the instructions on the image below to move the robot on the remote location using on-screen control panel.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623534969/HWU_Telecare/Instruction_screens-3_rz8uoa.jpg" />
+
+                        </Col>
+                        <Col sm="12" id="helpheadcontrols" className="mt-3">
+
+                            <h5 className="helph5header">How to look around using the robot</h5>
+                            <p className="mt-3">
+                                <strong>Using keyboard: </strong> Follow the instructions on the image below to control the telecare robot's head.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623537118/HWU_Telecare/Instruction_screens-6_fabeae.jpg" />
+                            <p className="mt-3">
+                                <strong>Using on-screen controls: </strong> Follow the instructions on the image below to control the telecare robot's head using on-screen control panel.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623535355/HWU_Telecare/Instruction_screens-4_grqlha.jpg" />
+
+                        </Col>
+                    </Row>
+                    <Row className="mt-2">
+                        <Col sm="12" className="center-content">
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to make a teleconference call</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helptelecall"><FiPhoneCall /></a>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to move with the robot</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helpbodycontrols"><IoMdBody /></a>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to look around</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helpheadcontrols"><AiFillRobot /></a>
+                            </OverlayTrigger>
+                        </Col>
+                    </Row>
+                </div>
+
+
+
+            </Modal>
+            {/* <Modal size="lg" show={showHelp}  backdrop="static" keyboard={false} centered>
+                <Modal.Header >
+                    <Modal.Title id="searchResTitle">How to use HWU Telecare</Modal.Title>
+
                 </Modal.Header>
-                <Modal.Body>
-                    
+                <Modal.Body style={{ overflowY: "scroll", maxHeight: "550px" }}>
+                    <Row>
+                        <Col sm="12">
+                            <p>Here you will find all the details on how to use HWU Telecare to connect to the telepresence robot and use it. Use the quick links at the top of this popup to jump to a particular section.</p>
+                        </Col>
+                        <Col sm="12" id="helptelecall" className="mt-3">
+                            <h5 className="helph5header">How to connect to the robot & join teleconference call</h5>
+                            <p className="mt-3">
+                                <strong>1.</strong> Click the "join" button on the screen. Once you click join you will establish a connection with the robot.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623529738/HWU_Telecare/Instruction_screen-1_xcrpmq.jpg" />
+                            <p className="mt-3">
+                                <strong>2.</strong> Type your name and click "Send" to send a call request to the remote user with the robot. If the remote user accepts your call, you will be able to start your communication.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623532490/HWU_Telecare/Instruction_screens-2_nowxsh.jpg" />
+                        </Col>
+                        <Col sm="12" id="helpbodycontrols" className="mt-3">
+
+                            <h5 className="helph5header">How to move using the robot</h5>
+                            <p className="mt-3">
+                                <strong>Using keyboard: </strong> Follow the instructions on the image below to move around the remote location using the robot.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623536435/HWU_Telecare/Instruction_screens-5_trv8ee.jpg" />
+                            <p className="mt-3">
+                                <strong>Using on-screen controls: </strong> Follow the instructions on the image below to move the robot on the remote location using on-screen control panel.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623534969/HWU_Telecare/Instruction_screens-3_rz8uoa.jpg" />
+
+                        </Col>
+                        <Col sm="12" id="helpheadcontrols" className="mt-3">
+
+                            <h5 className="helph5header">How to look around using the robot</h5>
+                            <p className="mt-3">
+                                <strong>Using keyboard: </strong> Follow the instructions on the image below to control the telecare robot's head.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623537118/HWU_Telecare/Instruction_screens-6_fabeae.jpg" />
+                            <p className="mt-3">
+                                <strong>Using on-screen controls: </strong> Follow the instructions on the image below to control the telecare robot's head using on-screen control panel.
+                            </p>
+                            <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623535355/HWU_Telecare/Instruction_screens-4_grqlha.jpg" />
+
+                        </Col>
+                    </Row>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={(e)=>handleClose(currentRobotData,loaderVisible)}>
+                    <OverlayTrigger placement="top" overlay={<Tooltip >How to make a teleconference call</Tooltip>}>
+                        <a className="btn btn-outline-primary" href="#helptelecall"><FiPhoneCall /></a>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={<Tooltip >How to move with the robot</Tooltip>}>
+                        <a className="btn btn-outline-primary" href="#helpbodycontrols"><IoMdBody /></a>
+                    </OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={<Tooltip >How to look around</Tooltip>}>
+                        <a className="btn btn-outline-primary" href="#helpheadcontrols"><AiFillRobot /></a>
+                    </OverlayTrigger>
+                    
+                    
+                    <Button variant="primary" onClick={handleCloseHelp}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={chooseRobot}>Choose</Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal> */}
         </Fragment>
     )
 };
 
 
+export default HelpModal

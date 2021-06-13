@@ -4,7 +4,7 @@ import { Route, Redirect } from 'react-router-dom';
 
 export default function ({component: Component, ...rest}) {
     const isLogin = () => {
-        if (localStorage.getItem("auth-token")!==null) {
+        if (localStorage.getItem("auth-token")) {
             return true;
         }
     

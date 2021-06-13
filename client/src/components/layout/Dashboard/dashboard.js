@@ -1,6 +1,6 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
 import Axios from "axios";
-import { ResponsiveEmbed, Row, Col, Button,Image } from 'react-bootstrap'
+import { ResponsiveEmbed, Row, Col, Button, Image } from 'react-bootstrap'
 import "../../../components/assets/style.css";
 import { FaPlusCircle } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
@@ -15,8 +15,7 @@ import { useMediaQuery } from 'react-responsive'
 import ControlPanel from "./ControlPanel"
 import { useHistory } from "react-router-dom";
 import DoctorWidget from "./DoctorWidget"
-import delay from "delay";
-import Offline from "../../assets/offline-background.gif";
+import HelpModal from './HelpModal';
 
 const socket = io();
 
@@ -29,8 +28,6 @@ export default function Dashboard() {
     const history = useHistory()
     const [userRobots, setUserRobots] = useState()
     const [cookies] = useCookies(["user"]);
-
-    const [toggleState, setToggleState] = useState(false)
     // const [embedSource, setEmbedSource] = useState("https://robotapi.isensetune.com/video_feed");
 
     const [prescribedTasks, setPrescribedTasks] = useState([])
@@ -58,125 +55,154 @@ export default function Dashboard() {
     // const headRightClick = useKeyPress("l");
     const [keyboardNav, setKeyboardNav] = useState(true);
     const [obstacleAv, setObstacleAv] = useState(true);
-    const [faceTrack,setFaceTrack] = useState(false)
+    const [faceTrack, setFaceTrack] = useState(false)
 
     const [prescriptionMsg, setPrescriptionMsg] = useState("");
     const [prescriptionType, setPrescriptionType] = useState("")
-    const [urgencyLevel,setUrgencyLevel] = useState("")
+    const [prescriptionPriority, setPrescriptionPriority] = useState("")
     const [prescriptionSchedule, setPrescriptionSchedule] = useState(new Date())
 
-    const [barProgress,setBarProgress]=useState(0)
-    const [vitalData,setVitalData] = useState("")
+    const [barProgress, setBarProgress] = useState(0)
+    const [vitalData, setVitalData] = useState("")
 
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
     const [successNotice, setSuccessNotice] = useState()
-    const [sonarData,setSonarData] = useState({"front":500,"back":500})
-    const [faceTrackStatus,setFaceTrackStatus]=useState(0)
+    const [sonarData, setSonarData] = useState({ "front": 500, "back": 500 })
+    const [faceTrackStatus, setFaceTrackStatus] = useState(0)
+    const [showHelp, setShowHelp] = useState(false);
 
     const iframeContainer = useRef(null)
 
     socket.on("TOSONARDATA", data => {
         console.log(data)
-        setSonarData(data);
+        setSonarData(() => data);
     });
-    socket.on("TOFACETRACKDATA",data=>{
+    socket.on("TOFACETRACKDATA", data => {
         console.log(data)
-        setFaceTrackStatus(data)
+        setFaceTrackStatus(() => data)
     })
 
-    useEffect(()=>{
-        if(faceTrack===false){
-            socket.emit("SENDFACETRACKSTATUS",0)
+    useEffect(() => {
+        if (faceTrack === false) {
+            socket.emit("SENDFACETRACKSTATUS", 0)
         }
-        else{
-            socket.emit("SENDFACETRACKSTATUS",1)
+        else {
+            socket.emit("SENDFACETRACKSTATUS", 1)
         }
-    },[faceTrack])
+    }, [faceTrack])
 
-    useEffect(()=>{
-        const sendKeySignal = async() =>{
-            if(clickVal!==0 && localStorage.getItem("roomsize")>0){
-                console.log(clickVal)
-                socket.emit("frontenddata",clickVal)
+    useEffect(() => {
+        const sendKeySignal = () => {
+            if (clickVal !== 0 && localStorage.getItem("roomsize") > 0) {
+                socket.emit("frontenddata", clickVal)
             }
         }
         sendKeySignal()
     })
-    useEffect(()=>{
-        if(clickVal===0){
-            socket.emit("frontenddata","nullmotion")
+
+    useEffect(() => {
+        if (clickVal === 0) {
+            socket.emit("frontenddata", "nullmotion")
         }
-    },[clickVal])
+    }, [clickVal])
 
     useEffect(() => {
         if (successNotice) {
             alert.success(<div style={{ 'fontSize': '0.70em' }}>{successNotice}</div>)
-            setSuccessNotice(undefined)
+            setSuccessNotice(() => undefined)
         }
     }, [successNotice])
 
     useEffect(() => {
         if (errorNotice) {
             alert.error(<div style={{ 'fontSize': '0.70em' }}>{errorNotice}</div>)
-            setErrorNotice(undefined)
+            setErrorNotice(() => undefined)
         }
     }, [errorNotice])
+
     useState(() => {
         const compMount = async () => {
-            setUserRobots(["Pepper"])
-            
+            setShowHelp(()=>false)
+            setUserRobots(() => ["Pepper"])
+
             let token = localStorage.getItem("auth-token");
-            if (token == null) {
-                localStorage.setItem("auth-token", "");
-                token = "";
-            }
-            else {
-                const tokenResponse = await Axios.post(
-                    "/api/users/tokenIsValid",
-                    null,
+            try {
+                const res = await Axios.get(
+                    "/api/telecare/prescription",
                     { headers: { "x-auth-token": token } }
-                );
-                // console.log(searchQuery)
-
-                if (tokenResponse.data) {
-                    try {
-                        const res = await Axios.get(
-                            "/api/telecare/prescription",
-                            { headers: { "x-auth-token": token } }
-                        )
-
-                        handlePrescribedTasks(res.data)
-                    } catch (error) {
-                        console.log(error)
-
-                    }
+                )
+                var tempTasks = []
+                for (var i = 0; i < res.data.length; i++) {
+                    tempTasks.push(res.data[i])
                 }
+                setPrescribedTasks(() => tempTasks)
+
+
+            } catch (error) {
+                console.log(error)
             }
-            setVitalHistory([
+            // if (token == null) {
+            //     localStorage.setItem("auth-token", "");
+            //     token = "";
+            // }
+            // else {
+            //     const tokenResponse = await Axios.post(
+            //         "/api/users/tokenIsValid",
+            //         null,
+            //         { headers: { "x-auth-token": token } }
+            //     );
+            //     // console.log(searchQuery)
+
+            //     if (tokenResponse.data) {
+            //         try {
+            //             const res = await Axios.get(
+            //                 "/api/telecare/prescription",
+            //                 { headers: { "x-auth-token": token } }
+            //             )
+            //             var tempTasks = []
+            //             for (var i = 0; i < res.data.length; i++) {
+            //                 tempTasks.push(res.data[i])
+            //             }
+            //             setPrescribedTasks(() => tempTasks)
+
+
+            //         } catch (error) {
+            //             console.log(error)
+            //         }
+            //     }
+            // }
+            setVitalHistory(() => [
                 { "dateAndTime": "10 May", "temperature": "37.2", "heartRate": "80", "bloodPressure": "119/81" },
                 { "dateAndTime": "10 May", "temperature": "37.1", "heartRate": "65", "bloodPressure": "119/80" },
                 { "dateAndTime": "11 May", "temperature": "37.3", "heartRate": "92", "bloodPressure": "121/75" },
                 { "dateAndTime": "12 May", "temperature": "37.4", "heartRate": "76", "bloodPressure": "122/85" },
             ])
-            if(localStorage.getItem("roomsize")===0){
-                var iframeItem = iframeContainer.current.contentWindow;
-                // const roomsize=iframeItem.localStorage.getItem("roomsize")
-                // console.log(roomsize)
-                iframeItem.postMessage("DONTSTARTCALL","*")
-            }
-            
+            // if (localStorage.getItem("roomsize") === 0) {
+            //     var iframeItem = iframeContainer.current.contentWindow;
+            //     // const roomsize=iframeItem.localStorage.getItem("roomsize")
+            //     // console.log(roomsize)
+            //     iframeItem.postMessage("DONTSTARTCALL", "*")
+            // }
+
         }
-        const handler = async(e) => {
-            try{
+        const handler = async (e) => {
+            try {
                 const tempRoomdt = JSON.parse(e.data)
-                localStorage.setItem("roomsize",tempRoomdt.roomsize)
+                localStorage.setItem("roomsize", tempRoomdt.roomsize)
             }
-            catch(err){
-                void(0)
+            catch (err) {
+                void (0)
             }
             // localStorage.setItem("roomsize",JSON.parse(e.data))
         }
+        // const loadPrescriptions = async (data) => {
+        //     var tempTasks = []
+        //     for (var i = 0; i < data.length; i++) {
+        //         tempTasks.push(data.data[i])
+        //     }
+        //     setPrescribedTasks(() => tempTasks)
+        // }
         compMount()
         window.addEventListener("message", handler)
     }, [])
@@ -240,50 +266,12 @@ export default function Dashboard() {
 
 
 
-
-
     useEffect(() => {
-        const getData = async (e) => {
-            if (toggleState === true) {
-                let token = localStorage.getItem("auth-token");
-                if (token == null) {
-                    localStorage.setItem("auth-token", "");
-                    token = "";
-                }
-                else {
-                    const tokenResponse = await Axios.post(
-                        "/api/users/tokenIsValid",
-                        null,
-                        { headers: { "x-auth-token": token } }
-                    );
-                    // console.log(searchQuery)
-
-                    if (tokenResponse.data) {
-                        const body = { toggleState }
-                        try {
-                            const robotRes = await Axios.get(
-                                "/api/feed/robotdata",
-                                { headers: { "x-auth-token": token } }
-                            )
-
-                        } catch (error) {
-                            console.log(error)
-
-                        }
-                    }
-                }
-            }
-
-        }
-        getData();
-    }, [toggleState]);
-
-    useEffect(()=>{
-        if(vitalData!==""){
-            setSuccessNotice(vitalData)
+        if (vitalData !== "") {
+            setSuccessNotice(() => vitalData)
             setVitalData("")
         }
-    },[vitalData])
+    }, [vitalData])
 
     const validateToken = async (e) => {
         let token = localStorage.getItem("auth-token");
@@ -311,7 +299,7 @@ export default function Dashboard() {
 
 
     const handleMovement = (data) => {
-        if(keyboardNav){
+        if (keyboardNav) {
             socket.emit("frontenddata", data)
         }
     }
@@ -319,23 +307,8 @@ export default function Dashboard() {
     const handlePrescribedTasks = async (data) => {
         var tempTasks = []
         for (var i = 0; i < data.length; i++) {
-            var dt = data[i].prescriptionSchedule
-            var msg = data[i].prescriptionMsg
-            var task = data[i].prescriptionType
-            var curTask = { "dateAndTime": dt, "prescribedAction": "" }
-            if (task === "Medication") {
-                curTask.prescribedAction = "Remind patient to take " + msg
-            }
-            else if (task === "Therapy") {
-                curTask.prescribedAction = "Remind patient to attend " + msg + " therapy lesson"
-            }
-            else if (task === "Diet") {
-                curTask.prescribedAction = "Remind patient to eat " + msg
-            }
-            else {
-                curTask.prescribedAction = msg
-            }
-            tempTasks.push(curTask)
+           
+            tempTasks.push(data[i])
         }
         setPrescribedTasks(tempTasks)
     }
@@ -349,7 +322,7 @@ export default function Dashboard() {
                 let token = await validateToken();
                 if (token !== 0) {
                     console.log(userData.user.username)
-                    const body = { username: userData.user.username, patientname: "maurodragone", prescriptionMsg: prescriptionMsg, prescriptionSchedule: prescriptionSchedule.toLocaleString(), prescriptionType: prescriptionType }
+                    const body = { username: userData.user.username, patientname: "maurodragone", prescriptionMsg: prescriptionMsg, prescriptionSchedule: prescriptionSchedule.toLocaleString(), prescriptionType: prescriptionType, prescriptionPriority: prescriptionPriority }
                     const res = await Axios.post("/api/telecare/prescription/new",
                         body,
                         { headers: { "x-auth-token": token } }
@@ -368,46 +341,46 @@ export default function Dashboard() {
 
     }
 
-    const handleDisconnect = async() =>{
+    const handleDisconnect = async () => {
         var iframeItem = iframeContainer.current.contentWindow;
         // console.log(document.getElementById("iframeTelecallContainer").contentWindow.getElementById("gobackTelecareCall").click())
         // iframeItem.contentWindow.getElementById("gobackTelecareCall").click()
-        iframeItem.postMessage("STOPCALL","*")
+        iframeItem.postMessage("STOPCALL", "*")
     }
-    
-    const handleConnect = async() =>{
-        if(localStorage.getItem("roomsize")>0){
+
+    const handleConnect = async () => {
+        if (localStorage.getItem("roomsize") > 0) {
             var iframeItem = iframeContainer.current.contentWindow;
             // const roomsize=iframeItem.localStorage.getItem("roomsize")
             // console.log(roomsize)
-            iframeItem.postMessage("STARTCALL","*")
+            iframeItem.postMessage("STARTCALL", "*")
         }
     }
-    const onPressureMeasurementClicked= async()=>{
+    const onPressureMeasurementClicked = async () => {
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
-        setTimeout(() => {                
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(20);
-        }, 1000*(1))
-        setTimeout(() => {                
+        }, 1000 * (1))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(40);
-        }, 1000*(3))
-        setTimeout(() => {                
+        }, 1000 * (3))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(60);
-        }, 1000*(5))
-        setTimeout(() => {                
+        }, 1000 * (5))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(80);
-        }, 1000*(6))
-        setTimeout(() => {                
+        }, 1000 * (6))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(100);
-        }, 1000*(9))
+        }, 1000 * (9))
         // for(var i=0; i<completionTime; i++){
         //     // var t = barProgress + (Math.floor(100 / completionTime));
         //     // eslint-disable-next-line no-loop-func
@@ -424,35 +397,35 @@ export default function Dashboard() {
             var randTopPressureVal = Math.floor(115 + Math.random() * (125 - 115));
             var randBottomPressureVal = Math.floor(75 + Math.random() * (85 - 75));
             setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
-            
-        }, (completionTime+2) * 1000)
+
+        }, (completionTime + 2) * 1000)
 
     }
-    const onPulseMeasurementClicked= async()=>{
+    const onPulseMeasurementClicked = async () => {
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
-        setTimeout(() => {                
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(20);
-        }, 1000*(1))
-        setTimeout(() => {                
+        }, 1000 * (1))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(40);
-        }, 1000*(3))
-        setTimeout(() => {                
+        }, 1000 * (3))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(60);
-        }, 1000*(5))
-        setTimeout(() => {                
+        }, 1000 * (5))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(80);
-        }, 1000*(6))
-        setTimeout(() => {                
+        }, 1000 * (6))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(100);
-        }, 1000*(9))
+        }, 1000 * (9))
         // for(var i=0; i<completionTime; i++){
         //     // var t = barProgress + (Math.floor(100 / completionTime));
         //     // eslint-disable-next-line no-loop-func
@@ -466,37 +439,37 @@ export default function Dashboard() {
         // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
         setTimeout(() => {
             var randTopPressureVal = Math.floor(75 + Math.random() * (85 - 75));
-            
-            setVitalData(randTopPressureVal.toString() + "BPM" );
+
+            setVitalData(randTopPressureVal.toString() + "BPM");
             setBarProgress(0)
-        }, (completionTime+2) * 1000)
-        
+        }, (completionTime + 2) * 1000)
+
     }
-    const onTempMeasurementClicked= async()=>{
+    const onTempMeasurementClicked = async () => {
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
-        setTimeout(() => {                
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(20);
-        }, 1000*(1))
-        setTimeout(() => {                
+        }, 1000 * (1))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(40);
-        }, 1000*(3))
-        setTimeout(() => {                
+        }, 1000 * (3))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(60);
-        }, 1000*(5))
-        setTimeout(() => {                
+        }, 1000 * (5))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(80);
-        }, 1000*(6))
-        setTimeout(() => {                
+        }, 1000 * (6))
+        setTimeout(() => {
             // console.log(t);
             setBarProgress(100);
-        }, 1000*(9))
+        }, 1000 * (9))
         // for(var i=0; i<completionTime; i++){
         //     // var t = barProgress + (Math.floor(100 / completionTime));
         //     // eslint-disable-next-line no-loop-func
@@ -510,11 +483,12 @@ export default function Dashboard() {
         // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
         setTimeout(() => {
             var randTopPressureVal = Math.floor(37 + Math.random() * (85 - 75),);
-            
-            setVitalData(randTopPressureVal.toString() + "BPM" );
+
+            setVitalData(randTopPressureVal.toString() + "BPM");
             setBarProgress(0)
-        }, (completionTime+2) * 1000)
+        }, (completionTime + 2) * 1000)
     }
+    
     return (
         <Fragment>
             {userRobots ? <Fragment>
@@ -531,29 +505,34 @@ export default function Dashboard() {
 
 
                 {isDesktopOrLaptop ? (
-                    <Row>
-                        <Col md="8" className="pr-1" >
-                            <div >
-                                <ResponsiveEmbed aspectRatio="16by9" >
-                                    {/* {
+                    <Fragment>
+                        <Row>
+                            <Col md="8" className="pr-1" >
+                                <div >
+                                    <ResponsiveEmbed aspectRatio="16by9" >
+                                        {/* {
                                         localStorage.getItem("roomsize")>0? (
                                             <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
                                         ):(
                                             <Image src={Offline} />
                                         )
                                     }                                     */}
-                                    <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
-                                </ResponsiveEmbed>
-                            </div>
+                                        <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
+                                    </ResponsiveEmbed>
+                                </div>
 
-                        </Col>
-                        <Col md="4" className="pl-1 scroll-column">
+                            </Col>
+                            <Col md="4" className="pl-1 scroll-column">
 
-                            <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setUrgencyLevel={setUrgencyLevel} urgencyLevel={urgencyLevel}/>
+                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} />
 
-                            <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
-                        </Col>
-                    </Row>
+                                <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
+                            </Col>
+
+                        </Row>
+                        <HelpModal showHelp={showHelp} setShowHelp={setShowHelp}/>
+                    </Fragment>
+
                 ) : (
                     <div class="no-robot-container">
                         <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>

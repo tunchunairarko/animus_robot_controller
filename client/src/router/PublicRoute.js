@@ -20,4 +20,3 @@ export default function PublicRoute ({component: Component, restricted, ...rest}
         )} />
     );
 };
-

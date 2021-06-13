@@ -28,13 +28,14 @@ router.get("/prescription", auth, async (req, res) => {
   });
 router.post("/prescription/new", auth, async (req, res) => {
     try {
-        let { username, patientname, prescriptionMsg, prescriptionSchedule, prescriptionType } = req.body;
+        let { username, patientname, prescriptionMsg, prescriptionSchedule, prescriptionType,prescriptionPriority } = req.body;
         const newPrescription = new Prescription({
             username,
             patientname,
             prescriptionMsg,
             prescriptionSchedule,
-            prescriptionType
+            prescriptionType,
+            prescriptionPriority
         });
         const savedPrescription = await newPrescription.save();
         const prescriptions = await Prescription.find().sort({"updatedAt":-1});

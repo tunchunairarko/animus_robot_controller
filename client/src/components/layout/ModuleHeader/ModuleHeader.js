@@ -20,6 +20,7 @@ export default function ModuleHeader() {
     const history = useHistory();
     const [batteryLevel,setBatteryLevel]=useState(0)
     const [batteryRawdData,setBatteryRawData]=useState(0)
+    let unmounted = false;
     const [dummyRoomData, setDummyRoomData] = useState(
         [
             { "robot": "Remote User: Mauro Dragone, Currie, Edinburgh" }
@@ -50,11 +51,11 @@ export default function ModuleHeader() {
             setCurTime(new Date().toLocaleTimeString())
             if (!dispName) {
                 if (cookies.username) {
-                    setDispName(cookies.username)
+                    setDispName(()=>cookies.username)
                 }
             }
         }, 1000)
-    })
+    },[])
 
     const handleLogout = () =>{
         setUserData({
@@ -120,7 +121,7 @@ export default function ModuleHeader() {
                             </Button>
                         </OverlayTrigger>
                         <OverlayTrigger placement="bottom" overlay={<Tooltip >Disconnect/Logout </Tooltip>}>
-                            <Button variant="success" className="mr-2" onClick={()=>handleLogout()}><FaPowerOff /></Button>
+                            <Button variant="outline-danger" className="mr-2" onClick={()=>handleLogout()}><FaPowerOff /></Button>
                         </OverlayTrigger>
                         {/* <OverlayTrigger placement="bottom" overlay={<Tooltip >Connect </Tooltip>}>
                             <Button variant="success" className="mr-2"><AiFillApi /></Button>

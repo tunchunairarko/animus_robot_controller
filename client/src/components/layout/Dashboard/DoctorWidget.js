@@ -1,20 +1,24 @@
 import React, { Fragment } from 'react'
-import { Card, Col, Button, Row, Badge, ToggleButton, ButtonGroup, OverlayTrigger, Tooltip, Tabs, Tab } from 'react-bootstrap'
-import { FaArrowAltCircleDown, FaArrowAltCircleRight, FaArrowCircleLeft, FaArrowCircleUp, FaMinusCircle, FaRedo, FaStopCircle, FaUndo } from 'react-icons/fa';
-import { MdGames, MdRefresh } from "react-icons/md";
-import { AiFillApi, AiOutlineDisconnect, AiFillInfoCircle } from "react-icons/ai";
-import { RiSensorFill } from "react-icons/ri";
+import { Card, Col, Row, Tabs, Tab } from 'react-bootstrap'
+
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator'
 
 export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
     const prescriptionColumns = [{
-        dataField: 'dateAndTime',
+        dataField: 'prescriptionSchedule',
         text: 'Scheduled on'
     }, {
-        dataField: 'prescribedAction',
-        text: 'Prescribed tasks'
+        dataField: 'prescriptionType',
+        text: 'Reminder type'
+    }, {
+        dataField: 'prescriptionPriority',
+        text: 'Priority'
+    }, {
+        dataField: 'prescriptionMsg',
+        text: 'Message'
     }];
+
     const vitalColumns = [{
         dataField: 'dateAndTime',
         text: 'Date '

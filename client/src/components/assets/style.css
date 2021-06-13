@@ -307,5 +307,10 @@ body{
 }
 .btn:focus,.btn:active{
     box-shadow: none!important;
-  
-  }
+}
+
+.helph5header{
+    text-align: center;
+    background-color: #212529;
+    color: #ffffff; 
+}

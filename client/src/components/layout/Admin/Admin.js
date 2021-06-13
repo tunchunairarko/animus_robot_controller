@@ -13,6 +13,7 @@ import ModuleHeader from "../ModuleHeader/ModuleHeader";
 import UserContext from "../../../context/UserContext";
 import { useHistory } from "react-router-dom";
 import AddRobot from "../RobotManager/AddRobot";
+import PublicRoute from '../../../router/PublicRoute';
 
 
 export default function Admin() {
@@ -20,6 +21,7 @@ export default function Admin() {
     // const [collapsed] = useState(false);
     // const [toggled, setToggled] = useState(false);
     const history = useHistory();
+    
     useEffect(() => {
         const checkIfUserExists = () => {
             if (!userData.user) {
@@ -38,8 +40,8 @@ export default function Admin() {
                 <div className="container-fluid main-body">
                     <ModuleHeader moduleName={"Dashboard"} />
                     <Switch>
-                        <PrivateRoute component={AddRobot} path="/robots/add" />
-                        <PrivateRoute component={Dashboard} path="/dashboard" />
+                        <PublicRoute component={AddRobot} path="/robots/add" />
+                        <PublicRoute component={Dashboard} path="/dashboard" />
                     </Switch>
                 </div>
             </main>
