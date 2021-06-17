@@ -14,13 +14,15 @@ const options = {
     offset: '20px',
     // you can also just use 'scale'
     transition: transitions.SCALE
-  }
+}
 
 ReactDOM.render(
     <CookiesProvider>
         <AlertProvider template={AlertTemplate} {...options}>
-            <App />
-        </AlertProvider>        
+            <React.StrictMode>
+                <App />
+            </React.StrictMode>
+        </AlertProvider>
     </CookiesProvider>, document.querySelector("#root")
-    
+
 );

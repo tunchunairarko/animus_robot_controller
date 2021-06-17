@@ -40,8 +40,8 @@ export default function Admin() {
                 <div className="container-fluid main-body">
                     <ModuleHeader moduleName={"Dashboard"} />
                     <Switch>
-                        <PublicRoute component={AddRobot} path="/robots/add" />
-                        <PublicRoute component={Dashboard} path="/dashboard" />
+                        <PrivateRoute component={AddRobot} path="/robots/add" strict/>
+                        <PrivateRoute component={Dashboard} path="/dashboard" strict/>
                     </Switch>
                 </div>
             </main>

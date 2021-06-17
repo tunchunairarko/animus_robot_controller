@@ -314,3 +314,13 @@ body{
     background-color: #212529;
     color: #ffffff; 
 }
+
+.robot-sensor{
+    max-height:200px;
+}
+
+.robot-head-div{
+    background-image: url("../assets/head-crosshair.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+}

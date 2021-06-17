@@ -1,13 +1,13 @@
-import React, { Fragment, useState } from 'react'
-import { Card, Col, Button, Row, Badge, ToggleButton, ButtonGroup, OverlayTrigger, Tooltip, Popover, Form, ProgressBar } from 'react-bootstrap'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Card, Col, Button, Row, Badge, ToggleButton, ButtonGroup, OverlayTrigger, Tooltip, Popover, Form, ProgressBar, Image } from 'react-bootstrap'
 import { FaArrowAltCircleDown, FaArrowAltCircleRight, FaArrowCircleLeft, FaArrowCircleUp, FaMinusCircle, FaRedo, FaStopCircle, FaUndo, FaHeartbeat, FaTemperatureHigh } from 'react-icons/fa';
 import { MdRefresh, MdSend, MdFace } from "react-icons/md";
 import { AiFillInfoCircle} from "react-icons/ai";
-
+import RobotHead from "../../assets/pepper_head.png"
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, vitalData, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack,prescriptionPriority,setPrescriptionPriority, setShowHelp }) {
+export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack,prescriptionPriority,setPrescriptionPriority, setShowHelp, disableNavButtons,sonarData,paddingLeft,paddingRight,paddingTop,paddingBottom}) {
 
     const [prescriptionData, setPrescriptionData] = useState(
         [
@@ -17,6 +17,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
             { "item": "General advice" }
         ]
     )
+    const [robotSensorImg,setRobotSensorImg]=useState(0)
     
     const [urgencyData,setUrgencyData] = useState(
         [
@@ -34,12 +35,30 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
         // history.push("/dashboard")
         document.location.reload()
     }
+    
 
     const handleReminderCreate = (value) =>{
         let newOption = {item:value}
         setPrescriptionType(value)
         setPrescriptionData(data=>[newOption, ...data])
     }
+    useEffect(()=>{
+        const retActiveSensors = () =>{
+            if(sonarData.front>0.5 && sonarData.back>0.5){
+                setRobotSensorImg(0) 
+            }
+            else if(sonarData.front<=0.5 && sonarData.back>0.5){
+                setRobotSensorImg(1)
+            }
+            else if(sonarData.front>0.5 && sonarData.back<=0.5){
+                setRobotSensorImg(2)
+            }
+            else{
+                setRobotSensorImg(3)
+            }
+        }
+        retActiveSensors()
+    },[sonarData])
     return (
         <Fragment>
             <Card className="dashboard-box-design mb-3" >
@@ -57,39 +76,66 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                             </Badge>
                         </Col>
                         <Col sm="6" className="center-content mt-2">
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("left")} onMouseUp={() => setClickVal(0)}><FaArrowCircleLeft /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("forward")} onMouseUp={() => setClickVal(0)}><FaArrowCircleUp /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("right")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleRight /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("left")} onMouseUp={() => setClickVal(0)}><FaArrowCircleLeft /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("forward")} onMouseUp={() => setClickVal(0)}><FaArrowCircleUp /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("right")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleRight /></Button>
                         </Col>
                         <Col sm="6" className="center-content mt-2">
-                            <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("head_up")} onMouseUp={() => setClickVal(0)}><FaArrowCircleUp /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-light" size="md"  disabled><FaMinusCircle /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("head_up")} onMouseUp={() => setClickVal(0)}><FaArrowCircleUp /></Button>
                             <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
                         </Col>
                         <Col sm="6" className="center-content  mt-2">
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("rotate_left")} onMouseUp={() => setClickVal(0)}><FaUndo /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-danger" size="md" onMouseDown={() => setClickVal("nullmotion")} onMouseUp={() => setClickVal(0)}><FaStopCircle /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("rotate_right")} onMouseUp={() => setClickVal(0)}><FaRedo /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("rotate_left")} onMouseUp={() => setClickVal(0)}><FaUndo /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-danger" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("nullmotion")} onMouseUp={() => setClickVal(0)}><FaStopCircle /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("rotate_right")} onMouseUp={() => setClickVal(0)}><FaRedo /></Button>
                         </Col>
 
                         <Col sm="6" className="center-content mt-2">
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("head_left")} onMouseUp={() => setClickVal(0)}><FaArrowCircleLeft /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled><FaMinusCircle /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("head_right")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleRight /></Button>
-                        </Col>
-                        <Col sm="6" className="center-content mt-2">
-
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("head_left")} onMouseUp={() => setClickVal(0)}><FaArrowCircleLeft /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("head_right")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleRight /></Button>
                         </Col>
                         <Col sm="6" className="center-content mt-2">
                             <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
-                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" onMouseDown={() => setClickVal("head_down")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleDown /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("back")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleDown /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
+                        </Col>
+                        <Col sm="6" className="center-content mt-2">
+                            <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("head_down")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleDown /></Button>
                             <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
                         </Col>
                     </Row>
-                    {/* <Row className="mt-2">
-                        <Col sm="6" className="p-5">s</Col>
-                        <Col sm="6" className="p-5"></Col>
-                    </Row> */}
+                    <Row className="mt-2">
+                        <Col sm="6" className="p-1 center-content">
+                            {
+                                robotSensorImg==0? (
+                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor_woxudn.png" />
+                                ):(<div></div>)
+                            }
+                            {
+                                robotSensorImg==1? (
+                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor-front_g0kq6u.png" />
+                                ):(<div></div>)
+                            }
+                            {
+                                robotSensorImg==2? (
+                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665345/HWU_Telecare/robot-sensor-back_crcjwg.png" />
+                                ):(<div></div>)
+                            }
+                            {
+                                robotSensorImg==3? (
+                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623666163/HWU_Telecare/robot-sensor-both_kqvfts.png" />
+                                ):(<div></div>)
+                            }
+                        </Col>
+                        <Col sm="6" className="p-1  center-content">
+                            <Col sm="12" className="robot-head-div center-content" style={{paddingTop:paddingTop+"%",paddingRight:paddingRight+"%",paddingBottom:paddingBottom+"%"}}>
+                                <Image src={RobotHead} fluid={true} />
+                            </Col>
+                        </Col>
+                    </Row>
                 </Card.Body>
             </Card >
             <Card className="dashboard-box-design mb-3" >
@@ -139,21 +185,21 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                         <Popover.Content >
                                             <Col sm="12">
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure pulse rate</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onPulseMeasurementClicked}><FaHeartbeat /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" disabled={disableNavButtons} onClick={onPulseMeasurementClicked}><FaHeartbeat /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure temperature</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onTempMeasurementClicked}><FaTemperatureHigh /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" disabled={disableNavButtons} onClick={onTempMeasurementClicked}><FaTemperatureHigh /> </Button>
                                                 </OverlayTrigger>
                                                 <OverlayTrigger placement="top" overlay={<Tooltip >Measure blood pressure</Tooltip>}>
-                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" onClick={onPressureMeasurementClicked}><GiHeartOrgan /> </Button>
+                                                    <Button variant="outline-info" className="mt-1 mr-1 ml-1 mb-1" disabled={disableNavButtons} onClick={onPressureMeasurementClicked}><GiHeartOrgan /> </Button>
                                                 </OverlayTrigger>
                                             </Col>
                                             <Col sm="12" className="mt-2">
                                                 <ProgressBar animated now={barProgress} min={0} max={100} />
                                             </Col>
-                                            <Col sm="12" className="mt-2 center-content">
+                                            {/* <Col sm="12" className="mt-2 center-content">
                                                 <p>{vitalData}</p>
-                                            </Col>
+                                            </Col> */}
 
                                         </Popover.Content>
                                     </Popover>

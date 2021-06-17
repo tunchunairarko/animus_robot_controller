@@ -5,7 +5,6 @@ require("dotenv").config();
 const helmet = require("helmet");
 const socketio = require("socket.io")
 
-
 mongoose.connect(
   process.env.MONGODB_CONNECTION_STRING,
   {
@@ -33,8 +32,8 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   if (req.method === 'OPTIONS') {
-      res.header("Access-Control-Allow-Methods", "PUT, POST, DELETE, GET");
-      return res.status(200).json({});
+    res.header("Access-Control-Allow-Methods", "PUT, POST, DELETE, GET");
+    return res.status(200).json({});
   }
   next();
 });
@@ -58,76 +57,77 @@ const server = app.listen(PORT, () => console.log(`The server has started on por
 
 
 
-const io = socketio(server,{pingTimeout: 0, origins:"*:*",
-allowEIO3: true})
+const io = socketio(server, {
+  pingTimeout: 0, origins: "*:*",
+  allowEIO3: true
+})
 
 let interval;
 
 io.on("connection", (socket) => {
   console.log("New client connected");
 
-  socket.on("pythondata",function(frame){
-    
+  socket.on("pythondata", function (frame) {
+
     var buff = Buffer.from(frame).toString()
     let base64data = buff.toString('base64');
-   
-    socket.broadcast.emit("FROMPYAPI",base64data)
-    
-  })
-  
 
-  socket.on("frontenddata",function(data){
-    console.log(data)
-    socket.broadcast.emit("FROMNODEAPI",data)
+    socket.broadcast.emit("FROMPYAPI", base64data)
+
   })
 
-  socket.on("frontendspeechdata",function(data){
+
+  socket.on("frontenddata", function (data) {
     console.log(data)
-    socket.broadcast.emit("FROMNODESPEECHAPI",data)
+    socket.broadcast.emit("FROMNODEAPI", data)
   })
 
-  socket.on("remoterobotdata",function(data){
+  socket.on("frontendspeechdata", function (data) {
     console.log(data)
-    
-    socket.broadcast.emit("FROMREMOTEROBOT",data)
-    
+    socket.broadcast.emit("FROMNODESPEECHAPI", data)
   })
-  socket.on("ANIMUSFPS",function(data){
+
+  socket.on("remoterobotdata", function (data) {
+    console.log(data)
+
+    socket.broadcast.emit("FROMREMOTEROBOT", data)
+
+  })
+  // socket.on("ANIMUSFPS", function (data) {
+  //   // console.log(data)
+  //   // socket.broadcast.emit("FPSDATA", data)
+  // })
+  socket.on("BATTERYDATA", function (data) {
     // console.log(data)
-    socket.broadcast.emit("FPSDATA",data)
+    socket.broadcast.emit("TOBATTERYDATA", data)
   })
-  socket.on("BATTERYDATA",function(data){
+
+  socket.on("FACETRACKDATA", function (data) {
     console.log(data)
-    socket.broadcast.emit("TOBATTERYDATA",data)
-  })
-  
-  socket.on("FACETRACKDATA",function(data){
-    console.log(data)
-    if(data===0){
-      socket.broadcast.emit("TOFACETRACKDATA",false)
+    if (data === 0) {
+      socket.broadcast.emit("TOFACETRACKDATA", false)
     }
-    else{
-      if(data===0){
-        socket.broadcast.emit("TOFACETRACKDATA",true)
+    else {
+      if (data === 0) {
+        socket.broadcast.emit("TOFACETRACKDATA", true)
       }
     }
   })
-  socket.on("SONARDATA",function(data){
-    console.log(data)
-    socket.broadcast.emit("TOSONARDATA",data)
+  socket.on("SONARDATA", function (data) {
+    // console.log(data)
+    socket.broadcast.emit("TOSONARDATA", data)
+  })
+  socket.on("sendHeadMovement", function (data) {
+    // console.log(data)
+    socket.broadcast.emit("recHeadMovement", data)
   })
 
-  socket.on("SENDFACETRACKSTATUS",function(data){
+  socket.on("SENDFACETRACKSTATUS", function (data) {
     console.log(data)
-    socket.broadcast.emit("RELAYFACETRACKSTATUS",data)
+    socket.broadcast.emit("RELAYFACETRACKSTATUS", data)
   })
 
-
-
-
-
-
-  socket.on("PEPPERCONTEST",function(data){
+  socket.on("PEPPERCONTEST", function (data) {
     console.log(data)
   })
 

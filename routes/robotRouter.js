@@ -56,6 +56,15 @@ router.post("/robotlist", auth, async (req, res) => {
     
     if(resp.data.remoteSearchError.success==true){
       var robotListData = []
+      var tmpHSR={
+        "robotId":"t314163-g20z-31fb-a6f7-2402ac1e5468",
+        
+        "robotState":{"location":{"ip":"137.195.86.140","city":"Currie","region":"Scotland","country":"GB","postal":"EH14"}},
+        "model":"Toyota HSR",
+        "robotConfig":{"inputModalities":["vision","audio","laser","proprioception"],"outputModalities":["motor","arm","speech"]}
+        
+      }
+      resp.data.robots.push(tmpHSR)
       for (var i=0; i<resp.data.robots.length; i++){
         var temp={
           "image":"",
@@ -74,6 +83,9 @@ router.post("/robotlist", auth, async (req, res) => {
         }
         else if(temp["robot_name"].toLowerCase()=="nao"){
           temp["image"]="https://res.cloudinary.com/djjea6fd7/image/upload/v1620563664/animus_robot/nao_trgwbu.jpg"
+        }
+        else if(temp["robot_name"].toLowerCase()=="toyota hsr"){
+          temp["image"]="https://res.cloudinary.com/decipher-tech/image/upload/v1623851457/HWU_Telecare/hsr_kqbkzh.jpg"
         }
         robotListData.push(temp)
       }

@@ -1,18 +1,24 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { Form, Row, Col, Button, Card } from 'react-bootstrap';
+import { Form, Row, Col, Button, Card, Spinner } from 'react-bootstrap';
 import { FaBroom, FaUpload, FaClock, FaInfoCircle } from 'react-icons/fa';
 import "../../../components/assets/style.css";
 import { useCookies } from "react-cookie";
 import Multiselect from "react-widgets/Multiselect";
 import "react-widgets/styles.css";
-import DashCard from "./DashCard"
 import SocketioLogo from "../../assets/Socket-io.png"
 import AnimusSocketioLogo from "../../assets/animus-socketio.png"
 import AnimusRobotModal from "./AnimusRobotModal"
-
+import { useAlert } from 'react-alert';
 
 export default function AddRobot() {
+    const alert = useAlert()
+    const [errorNotice, setErrorNotice] = useState()
+    const [successNotice, setSuccessNotice] = useState()
+    const [buttonActiveState,setButtonActiveState]=useState(false)
+    
     const allModalities = [
+        "arm",
+        "laser",
         "emotion",
         "motor",
         "speech",
@@ -60,6 +66,27 @@ export default function AddRobot() {
             handleShow();
         }        
     };
+    useEffect(() => {
+        if (successNotice) {
+            alert.success(<div style={{ 'fontSize': '0.70em' }}>{successNotice}</div>)
+            setSuccessNotice(() => undefined)
+        }
+    }, [successNotice])
+
+    useEffect(() => {
+        if (errorNotice) {
+            alert.error(<div style={{ 'fontSize': '0.70em' }}>{errorNotice}</div>)
+            setErrorNotice(() => undefined)
+        }
+    }, [errorNotice])
+
+    const handleRobotRegistration = () =>{
+        setButtonActiveState(true)
+        setTimeout(() => {
+            setButtonActiveState(false)
+            setSuccessNotice("Robot registered successfully")
+        }, 1000 * (3))
+    }
     return (
         <Fragment>
             <div class="robot-container">
@@ -228,7 +255,17 @@ export default function AddRobot() {
                                             />
                                         </Col>
                                         <Col sm="6" className="mt-2">
-                                            <Button variant="primary" block ><FaUpload /> Register robot </Button>
+                                            {!buttonActiveState?(
+                                                <Button variant="primary" block onClick={handleRobotRegistration}><FaUpload /> Register robot </Button>
+                                            ):(
+                                                <Button variant="primary" block disabled><Spinner
+                                                as="span"
+                                                animation="border"
+                                                size="sm"
+                                                role="status"
+                                                aria-hidden="true"
+                                              /> Registering... </Button>
+                                            )}
                                         </Col>
                                     </Form.Group>
                                 </Form>

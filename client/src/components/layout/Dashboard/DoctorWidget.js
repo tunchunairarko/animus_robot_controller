@@ -20,17 +20,17 @@ export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
     }];
 
     const vitalColumns = [{
-        dataField: 'dateAndTime',
-        text: 'Date '
+        dataField: 'id',
+        text: 'Sl. no'
+    },{
+        dataField: 'measurementDate',
+        text: 'Date'
     }, {
-        dataField: 'temperature',
-        text: 'Temperature'
+        dataField: 'measurementType',
+        text: 'Measured vital'
     }, {
-        dataField: 'heartRate',
-        text: 'Heart rate'
-    }, {
-        dataField: 'bloodPressure',
-        text: 'Blood pressure'
+        dataField: 'measuredResult',
+        text: 'Result'
     }
     
     ];
@@ -51,7 +51,7 @@ export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
                                 <Tab eventKey="patientProfile" title="Robot's reminders" className="mt-4">
                                     <BootstrapTable
                                         pagination={paginationFactory(options)}
-                                        keyField="id"
+                                        keyField="prescriptionSchedule"
                                         data={prescribedTasks}
                                         columns={prescriptionColumns}
                                         striped

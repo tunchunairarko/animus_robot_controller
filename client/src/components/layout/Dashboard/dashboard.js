@@ -36,6 +36,7 @@ export default function Dashboard() {
 
     const upPress = useKeyPress("w");
     const leftPress = useKeyPress("a");
+    const downPress = useKeyPress("s");
     const rightPress = useKeyPress("d");
     const leftRotatePress = useKeyPress("q");
     const rightRotatePress = useKeyPress("e");
@@ -64,6 +65,7 @@ export default function Dashboard() {
 
     const [barProgress, setBarProgress] = useState(0)
     const [vitalData, setVitalData] = useState("")
+    const [disableNavButtons,setDisableNavButtons] = useState(false)
 
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
@@ -73,14 +75,46 @@ export default function Dashboard() {
     const [showHelp, setShowHelp] = useState(false);
 
     const iframeContainer = useRef(null)
+    const [paddingLeft,setPaddingLeft]=useState(25);
+    const [paddingRight,setPaddingRight]=useState(25);
+    const [paddingTop,setPaddingTop]=useState(25);
+    const [paddingBottom,setPaddingBottom]=useState(25);
+
+    socket.on("recHeadMovement",data=>{
+        if(data=="up"){
+            setPaddingTop(paddingTop-0.125)
+            setPaddingBottom(paddingBottom+0.125)
+        }
+        else if(data=="down"){
+            setPaddingTop(paddingTop+0.125)
+            setPaddingBottom(paddingBottom-0.125)
+        }
+        else if(data=="left"){
+            setPaddingLeft(paddingLeft-0.125)
+            setPaddingRight(paddingRight+0.125)
+        }
+        else if(data=="right"){
+            setPaddingLeft(paddingLeft+0.125)
+            setPaddingRight(paddingRight-0.125)
+        }
+        else if(data=="reset"){
+            setPaddingLeft(25)
+            setPaddingRight(25)
+            setPaddingTop(25)
+            setPaddingBottom(25)
+        }
+    })
 
     socket.on("TOSONARDATA", data => {
-        console.log(data)
+        //console.log(data)
         setSonarData(() => data);
     });
     socket.on("TOFACETRACKDATA", data => {
-        console.log(data)
+        //console.log(data)
         setFaceTrackStatus(() => data)
+    })
+    socket.on("FPSDATA",data=>{
+        console.log(data)
     })
 
     useEffect(() => {
@@ -94,8 +128,20 @@ export default function Dashboard() {
 
     useEffect(() => {
         const sendKeySignal = () => {
-            if (clickVal !== 0 && localStorage.getItem("roomsize") > 0) {
-                socket.emit("frontenddata", clickVal)
+            if (clickVal != 0 && localStorage.getItem("roomsize") > 0) {
+                if(clickVal=="forward"){
+                    if(sonarData.front>=0.50){
+                        socket.emit("frontenddata", clickVal)
+                    }
+                }
+                else if(clickVal=="back"){
+                    if(sonarData.back>0.50){
+                        socket.emit("frontenddata", clickVal)
+                    }
+                }
+                else {
+                    socket.emit("frontenddata", clickVal)
+                }
             }
         }
         sendKeySignal()
@@ -140,7 +186,24 @@ export default function Dashboard() {
 
 
             } catch (error) {
-                console.log(error)
+                //console.log(error)
+            }
+            try {
+                const res = await Axios.get(
+                    "/api/telecare/measurement",
+                    { headers: { "x-auth-token": token } }
+                )
+                var tempMeasurement = []
+                for (var i = 0; i < res.data.length; i++) {
+                    var item=res.data[i]
+                    item.id=i+1
+                    tempMeasurement.push(item)
+                }
+                setVitalHistory(() => tempMeasurement)
+
+
+            } catch (error) {
+                //console.log(error)
             }
             // if (token == null) {
             //     localStorage.setItem("auth-token", "");
@@ -152,7 +215,7 @@ export default function Dashboard() {
             //         null,
             //         { headers: { "x-auth-token": token } }
             //     );
-            //     // console.log(searchQuery)
+            //     // //console.log(searchQuery)
 
             //     if (tokenResponse.data) {
             //         try {
@@ -168,20 +231,15 @@ export default function Dashboard() {
 
 
             //         } catch (error) {
-            //             console.log(error)
+            //             //console.log(error)
             //         }
             //     }
             // }
-            setVitalHistory(() => [
-                { "dateAndTime": "10 May", "temperature": "37.2", "heartRate": "80", "bloodPressure": "119/81" },
-                { "dateAndTime": "10 May", "temperature": "37.1", "heartRate": "65", "bloodPressure": "119/80" },
-                { "dateAndTime": "11 May", "temperature": "37.3", "heartRate": "92", "bloodPressure": "121/75" },
-                { "dateAndTime": "12 May", "temperature": "37.4", "heartRate": "76", "bloodPressure": "122/85" },
-            ])
+            
             // if (localStorage.getItem("roomsize") === 0) {
             //     var iframeItem = iframeContainer.current.contentWindow;
             //     // const roomsize=iframeItem.localStorage.getItem("roomsize")
-            //     // console.log(roomsize)
+            //     // //console.log(roomsize)
             //     iframeItem.postMessage("DONTSTARTCALL", "*")
             // }
 
@@ -286,7 +344,7 @@ export default function Dashboard() {
                 null,
                 { headers: { "x-auth-token": token } }
             );
-            // console.log(searchQuery)
+            // //console.log(searchQuery)
 
             if (tokenResponse.data) {
                 return (token)
@@ -300,7 +358,16 @@ export default function Dashboard() {
 
     const handleMovement = (data) => {
         if (keyboardNav) {
-            socket.emit("frontenddata", data)
+            if(data=="forward" && sonarData.front>0.50){
+                socket.emit("frontenddata", data)
+            }
+            else if(data=="back" && sonarData.back>0.50){
+                socket.emit("frontenddata", data)
+            }
+            else{
+                socket.emit("frontenddata", data)
+            }
+            // socket.emit("frontenddata", data)
         }
     }
 
@@ -313,15 +380,11 @@ export default function Dashboard() {
         setPrescribedTasks(tempTasks)
     }
     const handleNewPrescription = async () => {
-        // console.log(prescriptionMsg)
-        // console.log(prescriptionType)
-        // console.log(prescriptionSchedule.toLocaleString())
-
         if (prescriptionMsg !== "") {
             try {
                 let token = await validateToken();
                 if (token !== 0) {
-                    console.log(userData.user.username)
+                    //console.log(userData.user.username)
                     const body = { username: userData.user.username, patientname: "maurodragone", prescriptionMsg: prescriptionMsg, prescriptionSchedule: prescriptionSchedule.toLocaleString(), prescriptionType: prescriptionType, prescriptionPriority: prescriptionPriority }
                     const res = await Axios.post("/api/telecare/prescription/new",
                         body,
@@ -337,14 +400,35 @@ export default function Dashboard() {
         else {
             setErrorNotice("Prescription details was not specified")
         }
-
-
     }
-
+    const handlePrescribedMeasurements = async (data) => {
+        var tempMeasurements = []
+        for (var i = 0; i < data.length; i++) {
+            var item=data[i]
+            item.id=i+1
+            tempMeasurements.push(item)
+        }
+        setVitalHistory(tempMeasurements)
+    }
+    const handleNewMeasurement = async (type,data) => {
+        try {
+            let token = await validateToken();
+            if (token !== 0) {
+                const body = { username: userData.user.username, patientname: "maurodragone", measurementDate:new Date().toLocaleDateString("en-GB"),measurementType:type,measurementData:data }
+                const res = await Axios.post("/api/telecare/measurement/new",
+                    body,
+                    { headers: { "x-auth-token": token } }
+                )
+                handlePrescribedMeasurements(res.data)
+                // setSuccessNotice("Task to the robot assigned successfully")
+            }
+        } catch (err) {
+            //console.log(err)
+            setErrorNotice("Could not update to the database")
+        }
+    }
     const handleDisconnect = async () => {
         var iframeItem = iframeContainer.current.contentWindow;
-        // console.log(document.getElementById("iframeTelecallContainer").contentWindow.getElementById("gobackTelecareCall").click())
-        // iframeItem.contentWindow.getElementById("gobackTelecareCall").click()
         iframeItem.postMessage("STOPCALL", "*")
     }
 
@@ -352,140 +436,117 @@ export default function Dashboard() {
         if (localStorage.getItem("roomsize") > 0) {
             var iframeItem = iframeContainer.current.contentWindow;
             // const roomsize=iframeItem.localStorage.getItem("roomsize")
-            // console.log(roomsize)
+            // //console.log(roomsize)
             iframeItem.postMessage("STARTCALL", "*")
         }
     }
     const onPressureMeasurementClicked = async () => {
+        setDisableNavButtons(true)
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(20);
         }, 1000 * (1))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(40);
         }, 1000 * (3))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(60);
         }, 1000 * (5))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(80);
         }, 1000 * (6))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        // for(var i=0; i<completionTime; i++){
-        //     // var t = barProgress + (Math.floor(100 / completionTime));
-        //     // eslint-disable-next-line no-loop-func
-        //     setTimeout(() => {                
-        //         // console.log(t);
-        //         setBarProgress(Math.floor(100/completionTime)*i);
-        //     }, 1000*(i+1))            
-        // }
-        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
-        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
-        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        
         setTimeout(() => {
             setBarProgress(0)
             var randTopPressureVal = Math.floor(115 + Math.random() * (125 - 115));
             var randBottomPressureVal = Math.floor(75 + Math.random() * (85 - 75));
-            setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+            setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal+" mmHg");
+            setDisableNavButtons(false)
+            handleNewMeasurement("bp",{"top":randTopPressureVal,"bottom":randBottomPressureVal})
 
         }, (completionTime + 2) * 1000)
 
     }
     const onPulseMeasurementClicked = async () => {
+        setDisableNavButtons(true)
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(20);
         }, 1000 * (1))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(40);
         }, 1000 * (3))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(60);
         }, 1000 * (5))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(80);
         }, 1000 * (6))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        // for(var i=0; i<completionTime; i++){
-        //     // var t = barProgress + (Math.floor(100 / completionTime));
-        //     // eslint-disable-next-line no-loop-func
-        //     setTimeout(() => {                
-        //         // console.log(t);
-        //         setBarProgress(Math.floor(100/completionTime)*i);
-        //     }, 1000*(i+1))            
-        // }
-        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
-        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
-        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        
         setTimeout(() => {
-            var randTopPressureVal = Math.floor(75 + Math.random() * (85 - 75));
-
-            setVitalData(randTopPressureVal.toString() + "BPM");
             setBarProgress(0)
+            var randTopPressureVal = Math.floor(75 + Math.random() * (85 - 75));
+            setVitalData(randTopPressureVal.toString() + "BPM");            
+            handleNewMeasurement("pulse",{"top":randTopPressureVal})
+            setDisableNavButtons(false)
         }, (completionTime + 2) * 1000)
 
     }
     const onTempMeasurementClicked = async () => {
+        setDisableNavButtons(true)
         setBarProgress(0)
         setVitalData("")
         // var completionTime = 7 + Math.random() * (4 - 1)
         var completionTime = 9
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(20);
         }, 1000 * (1))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(40);
         }, 1000 * (3))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(60);
         }, 1000 * (5))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(80);
         }, 1000 * (6))
         setTimeout(() => {
-            // console.log(t);
+            // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        // for(var i=0; i<completionTime; i++){
-        //     // var t = barProgress + (Math.floor(100 / completionTime));
-        //     // eslint-disable-next-line no-loop-func
-        //     setTimeout(() => {                
-        //         // console.log(t);
-        //         setBarProgress(Math.floor(100/completionTime)*i);
-        //     }, 1000*(i+1))            
-        // }
-        // var randTopPressureVal = Math.floor(115 + Math.random() * (10 - 1));
-        // var randBottomPressureVal = Math.floor(75 + Math.random() * (10 - 1));
-        // setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal);
+        
         setTimeout(() => {
-            var randTopPressureVal = Math.floor(37 + Math.random() * (85 - 75),);
-
-            setVitalData(randTopPressureVal.toString() + "BPM");
+            var randTopPressureVal = Math.floor(37 + Math.random() * (25 - 15),);
+            setVitalData(randTopPressureVal.toString() + " °C");
             setBarProgress(0)
+            setDisableNavButtons(false)
+            handleNewMeasurement("temperature",{"top":randTopPressureVal})
         }, (completionTime + 2) * 1000)
     }
     
@@ -494,6 +555,7 @@ export default function Dashboard() {
             {userRobots ? <Fragment>
                 {upPress && handleMovement("forward")}
                 {leftPress && handleMovement("left")}
+                {downPress && handleMovement("back")}
                 {rightPress && handleMovement("right")}
                 {leftRotatePress && handleMovement("rotate_left")}
                 {rightRotatePress && handleMovement("rotate_right")}
@@ -524,7 +586,7 @@ export default function Dashboard() {
                             </Col>
                             <Col md="4" className="pl-1 scroll-column">
 
-                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} vitalData={vitalData} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} />
+                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} disableNavButtons={disableNavButtons} sonarData={sonarData} paddingBottom={paddingBottom} paddingTop={paddingTop} paddingRight={paddingRight} paddingLeft={paddingLeft}/>
 
                                 <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
                             </Col>

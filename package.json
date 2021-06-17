@@ -36,6 +36,7 @@
     "mongoose": "^5.11.15",
     "nanomsg": "^4.1.0",
     "ngrok": "^3.4.1",
+    "ping-monitor": "^0.6.1",
     "python-shell": "^2.0.3",
     "request": "^2.88.2",
     "serve-static": "^1.14.1",
