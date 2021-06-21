@@ -45,7 +45,7 @@ export default function Dashboard() {
     const headLeftPress = useKeyPress("j");
     const headRightPress = useKeyPress("l");
 
-    const [upClick, setUpClick] = useState(false);
+
     const [clickVal, setClickVal] = useState(0)
     // const rightClick = useKeyPress("d");
     // const leftRotateClick = useKeyPress("q");
@@ -71,39 +71,39 @@ export default function Dashboard() {
     const [errorNotice, setErrorNotice] = useState()
     const [successNotice, setSuccessNotice] = useState()
     const [sonarData, setSonarData] = useState({ "front": 500, "back": 500 })
-    const [faceTrackStatus, setFaceTrackStatus] = useState(0)
+    
     const [showHelp, setShowHelp] = useState(false);
 
     const iframeContainer = useRef(null)
-    const [paddingLeft,setPaddingLeft]=useState(25);
-    const [paddingRight,setPaddingRight]=useState(25);
-    const [paddingTop,setPaddingTop]=useState(25);
-    const [paddingBottom,setPaddingBottom]=useState(25);
+    // const [paddingLeft,setPaddingLeft]=useState(25);
+    // const [paddingRight,setPaddingRight]=useState(25);
+    // const [paddingTop,setPaddingTop]=useState(25);
+    // const [paddingBottom,setPaddingBottom]=useState(25);
 
-    socket.on("recHeadMovement",data=>{
-        if(data=="up"){
-            setPaddingTop(paddingTop-0.125)
-            setPaddingBottom(paddingBottom+0.125)
-        }
-        else if(data=="down"){
-            setPaddingTop(paddingTop+0.125)
-            setPaddingBottom(paddingBottom-0.125)
-        }
-        else if(data=="left"){
-            setPaddingLeft(paddingLeft-0.125)
-            setPaddingRight(paddingRight+0.125)
-        }
-        else if(data=="right"){
-            setPaddingLeft(paddingLeft+0.125)
-            setPaddingRight(paddingRight-0.125)
-        }
-        else if(data=="reset"){
-            setPaddingLeft(25)
-            setPaddingRight(25)
-            setPaddingTop(25)
-            setPaddingBottom(25)
-        }
-    })
+    // socket.on("recHeadMovement",data=>{
+    //     if(data=="up"){
+    //         setPaddingTop(paddingTop-0.125)
+    //         setPaddingBottom(paddingBottom+0.125)
+    //     }
+    //     else if(data=="down"){
+    //         setPaddingTop(paddingTop+0.125)
+    //         setPaddingBottom(paddingBottom-0.125)
+    //     }
+    //     else if(data=="left"){
+    //         setPaddingLeft(paddingLeft-0.125)
+    //         setPaddingRight(paddingRight+0.125)
+    //     }
+    //     else if(data=="right"){
+    //         setPaddingLeft(paddingLeft+0.125)
+    //         setPaddingRight(paddingRight-0.125)
+    //     }
+    //     else if(data=="reset"){
+    //         setPaddingLeft(25)
+    //         setPaddingRight(25)
+    //         setPaddingTop(25)
+    //         setPaddingBottom(25)
+    //     }
+    // })
 
     socket.on("TOSONARDATA", data => {
         //console.log(data)
@@ -111,7 +111,14 @@ export default function Dashboard() {
     });
     socket.on("TOFACETRACKDATA", data => {
         //console.log(data)
-        setFaceTrackStatus(() => data)
+        // setFaceTrackStatus(() => data)
+        if(data==0){
+            setFaceTrack(false)
+        }
+        else{
+            setFaceTrack(true)
+        }
+
     })
     socket.on("FPSDATA",data=>{
         console.log(data)
@@ -129,12 +136,12 @@ export default function Dashboard() {
     useEffect(() => {
         const sendKeySignal = () => {
             if (clickVal != 0 && localStorage.getItem("roomsize") > 0) {
-                if(clickVal=="forward"){
+                if(clickVal==="forward"){
                     if(sonarData.front>=0.50){
                         socket.emit("frontenddata", clickVal)
                     }
                 }
-                else if(clickVal=="back"){
+                else if(clickVal==="back"){
                     if(sonarData.back>0.50){
                         socket.emit("frontenddata", clickVal)
                     }
@@ -357,12 +364,16 @@ export default function Dashboard() {
 
 
     const handleMovement = (data) => {
-        if (keyboardNav) {
-            if(data=="forward" && sonarData.front>0.50){
-                socket.emit("frontenddata", data)
+        if (keyboardNav && localStorage.getItem("roomsize") > 0) {
+            if(data=="forward"){
+                if(sonarData.front>0.50){
+                    socket.emit("frontenddata", data)
+                }                
             }
-            else if(data=="back" && sonarData.back>0.50){
-                socket.emit("frontenddata", data)
+            else if(data=="back"){
+                if(sonarData.back>0.50){
+                    socket.emit("frontenddata", data)
+                }                
             }
             else{
                 socket.emit("frontenddata", data)
@@ -586,7 +597,8 @@ export default function Dashboard() {
                             </Col>
                             <Col md="4" className="pl-1 scroll-column">
 
-                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} disableNavButtons={disableNavButtons} sonarData={sonarData} paddingBottom={paddingBottom} paddingTop={paddingTop} paddingRight={paddingRight} paddingLeft={paddingLeft}/>
+                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} disableNavButtons={disableNavButtons} sonarData={sonarData} />
+                                {/* paddingBottom={paddingBottom} paddingTop={paddingTop} paddingRight={paddingRight} paddingLeft={paddingLeft} */}
 
                                 <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
                             </Col>

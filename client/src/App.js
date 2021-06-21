@@ -15,7 +15,6 @@ import PublicRoute from './router/PublicRoute';
 export default function App() {
     
     const [cookies, setCookie] = useCookies(["user"]);
-    const [showHeader,setShowHeader] = useState(false);
     const tempEmail = "ms414@hw.ac.uk"; //will remove later
     const tempPassword = "C3):]RR[Rs$Y\")"; //will remove later
     const [userData, setUserData] = useState ({
@@ -118,8 +117,8 @@ export default function App() {
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
                         <PublicRoute restricted={true} component={Register} path="/register" exact />
                         <PrivateRoute component={Admin} path="/dashboard" strict/>
-                        <PrivateRoute component={Admin} path="/settings" />
-                        <PrivateRoute component={Admin} path="/robots/add" />
+                        <PrivateRoute component={Admin} path="/settings" strict/>
+                        <PrivateRoute component={Admin} path="/robots/add" strict/>
                         <PublicRoute restricted={true} component={Admin} path="/" exact />
                         
                     </Switch>

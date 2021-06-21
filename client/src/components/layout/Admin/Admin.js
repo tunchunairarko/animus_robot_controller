@@ -20,17 +20,17 @@ export default function Admin() {
     const { userData } = useContext(UserContext);
     // const [collapsed] = useState(false);
     // const [toggled, setToggled] = useState(false);
-    const history = useHistory();
+    // const history = useHistory();
     
-    useEffect(() => {
-        const checkIfUserExists = () => {
-            if (!userData.user) {
-                history.push("/login")
-            }
-        }
-        checkIfUserExists()
+    // useEffect(() => {
+    //     const checkIfUserExists = () => {
+    //         if (!userData.user) {
+    //             history.push("/login")
+    //         }
+    //     }
+    //     checkIfUserExists()
 
-    }, [])
+    // }, [])
 
 
     return (
@@ -40,8 +40,8 @@ export default function Admin() {
                 <div className="container-fluid main-body">
                     <ModuleHeader moduleName={"Dashboard"} />
                     <Switch>
-                        <PrivateRoute component={AddRobot} path="/robots/add" strict/>
-                        <PrivateRoute component={Dashboard} path="/dashboard" strict/>
+                        <PrivateRoute component={AddRobot} path="/robots/add" />
+                        <PrivateRoute component={Dashboard} path="/dashboard" />
                     </Switch>
                 </div>
             </main>

@@ -131,9 +131,9 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                             }
                         </Col>
                         <Col sm="6" className="p-1  center-content">
-                            <Col sm="12" className="robot-head-div center-content" style={{paddingTop:paddingTop+"%",paddingRight:paddingRight+"%",paddingBottom:paddingBottom+"%"}}>
+                            {/* <Col sm="12" className="robot-head-div center-content" style={{paddingTop:paddingTop+"%",paddingRight:paddingRight+"%",paddingBottom:paddingBottom+"%"}}>
                                 <Image src={RobotHead} fluid={true} />
-                            </Col>
+                            </Col> */}
                         </Col>
                     </Row>
                 </Card.Body>
