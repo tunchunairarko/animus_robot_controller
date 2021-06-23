@@ -2,12 +2,12 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Card, Col, Button, Row, Badge, ToggleButton, ButtonGroup, OverlayTrigger, Tooltip, Popover, Form, ProgressBar, Image } from 'react-bootstrap'
 import { FaArrowAltCircleDown, FaArrowAltCircleRight, FaArrowCircleLeft, FaArrowCircleUp, FaMinusCircle, FaRedo, FaStopCircle, FaUndo, FaHeartbeat, FaTemperatureHigh } from 'react-icons/fa';
 import { MdRefresh, MdSend, MdFace } from "react-icons/md";
-import { AiFillInfoCircle} from "react-icons/ai";
+import { AiFillInfoCircle } from "react-icons/ai";
 import RobotHead from "../../assets/pepper_head.png"
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack,prescriptionPriority,setPrescriptionPriority, setShowHelp, disableNavButtons,sonarData,paddingLeft,paddingRight,paddingTop,paddingBottom}) {
+export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack, prescriptionPriority, setPrescriptionPriority, setShowHelp, disableNavButtons, sonarData, paddingLeft, paddingRight, paddingTop, paddingBottom }) {
 
     const [prescriptionData, setPrescriptionData] = useState(
         [
@@ -17,9 +17,9 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
             { "item": "General advice" }
         ]
     )
-    const [robotSensorImg,setRobotSensorImg]=useState(0)
-    
-    const [urgencyData,setUrgencyData] = useState(
+    const [robotSensorImg, setRobotSensorImg] = useState(0)
+
+    const [urgencyData, setUrgencyData] = useState(
         [
             { "item": "High" },
             { "item": "Medium" },
@@ -35,30 +35,30 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
         // history.push("/dashboard")
         document.location.reload()
     }
-    
 
-    const handleReminderCreate = (value) =>{
-        let newOption = {item:value}
+
+    const handleReminderCreate = (value) => {
+        let newOption = { item: value }
         setPrescriptionType(value)
-        setPrescriptionData(data=>[newOption, ...data])
+        setPrescriptionData(data => [newOption, ...data])
     }
-    useEffect(()=>{
-        const retActiveSensors = () =>{
-            if(sonarData.front>0.5 && sonarData.back>0.5){
-                setRobotSensorImg(0) 
+    useEffect(() => {
+        const retActiveSensors = () => {
+            if (sonarData.front > 0.5 && sonarData.back > 0.5) {
+                setRobotSensorImg(0)
             }
-            else if(sonarData.front<=0.5 && sonarData.back>0.5){
+            else if (sonarData.front <= 0.5 && sonarData.back > 0.5) {
                 setRobotSensorImg(1)
             }
-            else if(sonarData.front>0.5 && sonarData.back<=0.5){
+            else if (sonarData.front > 0.5 && sonarData.back <= 0.5) {
                 setRobotSensorImg(2)
             }
-            else{
+            else {
                 setRobotSensorImg(3)
             }
         }
         retActiveSensors()
-    },[sonarData])
+    }, [sonarData])
     return (
         <Fragment>
             <Card className="dashboard-box-design mb-3" >
@@ -81,7 +81,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                             <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("right")} onMouseUp={() => setClickVal(0)}><FaArrowAltCircleRight /></Button>
                         </Col>
                         <Col sm="6" className="center-content mt-2">
-                            <Button className="ml-1 mr-1" variant="outline-light" size="md"  disabled><FaMinusCircle /></Button>
+                            <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
                             <Button className="ml-1 mr-1" variant="outline-primary" size="md" disabled={disableNavButtons} onMouseDown={() => setClickVal("head_up")} onMouseUp={() => setClickVal(0)}><FaArrowCircleUp /></Button>
                             <Button className="ml-1 mr-1" variant="outline-light" size="md" disabled><FaMinusCircle /></Button>
                         </Col>
@@ -108,33 +108,42 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                         </Col>
                     </Row>
                     <Row className="mt-2">
-                        <Col sm="6" className="p-1 center-content">
+                        <Col sm="12" className="p-1 center-content">
                             {
-                                robotSensorImg==0? (
+                                robotSensorImg == 0 ? (
                                     <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor_woxudn.png" />
-                                ):(<div></div>)
+                                ) : (<div></div>)
                             }
                             {
-                                robotSensorImg==1? (
-                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor-front_g0kq6u.png" />
-                                ):(<div></div>)
+                                robotSensorImg == 1 ? (
+                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle at front. Please move backwards.</Tooltip>}>
+                                        <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor-front_g0kq6u.png" />
+                                    </OverlayTrigger>
+
+                                ) : (<div></div>)
                             }
                             {
-                                robotSensorImg==2? (
-                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665345/HWU_Telecare/robot-sensor-back_crcjwg.png" />
-                                ):(<div></div>)
+                                robotSensorImg == 2 ? (
+                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle at the back. Please don't move backwards.</Tooltip>}>
+                                        <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665345/HWU_Telecare/robot-sensor-back_crcjwg.png" />
+                                    </OverlayTrigger>
+                                    
+                                ) : (<div></div>)
                             }
                             {
-                                robotSensorImg==3? (
-                                    <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623666163/HWU_Telecare/robot-sensor-both_kqvfts.png" />
-                                ):(<div></div>)
+                                robotSensorImg == 3 ? (
+                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle both at the front and back. Rotate the robot sideways and step aside</Tooltip>}>
+                                        <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623666163/HWU_Telecare/robot-sensor-both_kqvfts.png" />
+                                    </OverlayTrigger>
+                                    
+                                ) : (<div></div>)
                             }
                         </Col>
-                        <Col sm="6" className="p-1  center-content">
-                            {/* <Col sm="12" className="robot-head-div center-content" style={{paddingTop:paddingTop+"%",paddingRight:paddingRight+"%",paddingBottom:paddingBottom+"%"}}>
+                        {/* <Col sm="6" className="p-1  center-content">
+                            <Col sm="12" className="robot-head-div center-content" style={{paddingTop:paddingTop+"%",paddingRight:paddingRight+"%",paddingBottom:paddingBottom+"%"}}>
                                 <Image src={RobotHead} fluid={true} />
-                            </Col> */}
-                        </Col>
+                            </Col> 
+                        </Col>*/}
                     </Row>
                 </Card.Body>
             </Card >
@@ -160,7 +169,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                     <ToggleButton checked={obstacleAv} value="2" onChange={(e) => setObstacleAv(e.currentTarget.checked)} type="checkbox" className="ml-1 mr-1" variant="outline-info" size="md"><RiSensorFill /></ToggleButton>
                                 </ButtonGroup>
                             </OverlayTrigger> */}
-                            
+
                         </Col>
 
                         <Col sm="12" className="center-content mt-2">
@@ -168,7 +177,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                 <Button variant="outline-info" className="ml-1 mr-1" onClick={onRefreshClicked}><MdRefresh />Refresh</Button>
                             </OverlayTrigger>
                             <OverlayTrigger placement="top" overlay={<Tooltip >Help</Tooltip>}>
-                                <Button variant="outline-info" className="ml-1 mr-1" onClick={()=>setShowHelp(true)}><AiFillInfoCircle /> Help</Button>
+                                <Button variant="outline-info" className="ml-1 mr-1" onClick={() => setShowHelp(true)}><AiFillInfoCircle /> Help</Button>
                             </OverlayTrigger>
                             <OverlayTrigger placement="top" overlay={<Tooltip >Activate/disactivate head movement while tracking face</Tooltip>}>
                                 <ButtonGroup toggle >
@@ -216,7 +225,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                         <Popover.Content >
                                             <Col sm="12" className="mt-2">
                                                 <DropdownList
-                                                    
+
                                                     placeholder="Choose/create reminder type"
                                                     allowCreate="onFilter"
                                                     data={prescriptionData}
@@ -236,7 +245,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                             </Col>
                                             <Col sm="12" className="mt-2">
                                                 <DropdownList
-                                                    
+
                                                     placeholder="Set priority level"
                                                     data={urgencyData}
                                                     textField='item'
@@ -254,7 +263,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                                 </Form.Group>
                                             </Col>
                                             <Col sm="12" className="mt-2">
-                                                <Button variant="outline-info" block onClick={ handleNewPrescription}><MdSend /> Send to the robot </Button>
+                                                <Button variant="outline-info" block onClick={handleNewPrescription}><MdSend /> Send to the robot </Button>
                                             </Col>
                                         </Popover.Content>
                                     </Popover>
@@ -269,7 +278,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
 
                 </Card.Body>
             </Card >
-            
+
         </Fragment>
     )
 }
