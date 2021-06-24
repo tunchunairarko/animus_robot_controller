@@ -47,7 +47,7 @@ export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
                 <Card.Body>
                     <Row >
                         <Col sm="12" >
-                            <Tabs defaultActiveKey="patientProfile" transition={false} id="noanim-tab-example">
+                            <Tabs defaultActiveKey="patientProfile" transition={false} >
                                 <Tab eventKey="patientProfile" title="Robot's reminders" className="mt-4">
                                     <BootstrapTable
                                         pagination={paginationFactory(options)}
@@ -59,7 +59,7 @@ export default function DoctorWidget({ prescribedTasks, vitalHistory }) {
                                         condensed
                                     />
                                 </Tab>
-                                <Tab eventKey="checkupHistory" title="Checkup history" className="mt-4">
+                                <Tab eventKey="checkupHistory" title="Checkup history" className="mt-4" >
                                     <BootstrapTable
                                         pagination={paginationFactory(options)}
                                         keyField="id"

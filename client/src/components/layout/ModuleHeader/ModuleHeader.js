@@ -52,14 +52,15 @@ export default function ModuleHeader() {
             setCurTime(new Date().toLocaleTimeString())
             if (!dispName) {
                 if (cookies.username) {
-                    setDispName(() => cookies.username)
+                    setDispName(()=>cookies.username)
                 }
             }
         }, 1000)
         setInterval(() => {
             if (localStorage.getItem("roomsize") > 0) {
                 const randVal = Math.floor(Math.random() * (4 - 3 + 1) + 3)
-                setSignalState(randVal)
+                console.log(randVal)
+                setSignalState(()=>randVal)
             }
         }, 5000)
     }, [])

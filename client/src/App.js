@@ -15,8 +15,6 @@ import PublicRoute from './router/PublicRoute';
 export default function App() {
     
     const [cookies, setCookie] = useCookies(["user"]);
-    const tempEmail = "ms414@hw.ac.uk"; //will remove later
-    const tempPassword = "C3):]RR[Rs$Y\")"; //will remove later
     const [userData, setUserData] = useState ({
         token: undefined,
         user: undefined,
@@ -74,7 +72,7 @@ export default function App() {
                     setCookie("displayName", "", {
                         path: "/"
                     });
-                    window.location.replace("/login", { path: '/' });
+                    window.location.replace("/login", { path: "/" });
                     
                     // logout();
                 }
@@ -112,7 +110,7 @@ export default function App() {
     return (
         <Fragment>
             <BrowserRouter>
-                <UserContext.Provider value={{ userData, setUserData, tempEmail, tempPassword }}> 
+                <UserContext.Provider value={{ userData, setUserData }}> 
                     <Switch>
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
                         <PublicRoute restricted={true} component={Register} path="/register" exact />

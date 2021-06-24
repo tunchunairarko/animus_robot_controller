@@ -1,14 +1,14 @@
 import React, { Fragment, useState, useContext, useEffect, useRef } from 'react'
 import Axios from "axios";
-import { ResponsiveEmbed, Row, Col, Button, Image } from 'react-bootstrap'
+import { ResponsiveEmbed, Row, Col, Button } from 'react-bootstrap'
 import "../../../components/assets/style.css";
 import { FaPlusCircle } from 'react-icons/fa';
 import { useCookies } from "react-cookie";
 import io from "socket.io-client";
 import UserContext from "../../../context/UserContext";
-import 'react-nipple/lib/styles.css';
+
 import { useAlert } from 'react-alert';
-import 'react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css';
+
 import useKeyPress from "../../keyboard/useKeyPress";
 import "react-widgets/styles.css";
 import { useMediaQuery } from 'react-responsive'

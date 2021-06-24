@@ -7,7 +7,7 @@ import { FaBars } from 'react-icons/fa';
 import '../../assets/Dashboard.scss';
 // import RobotSettings from '../Settings/RobotSettings';
 import Dashboard from '../Dashboard/dashboard';
-import { Switch } from "react-router";
+import { Switch } from "react-router-dom";
 import "../../../components/assets/style.css";
 import ModuleHeader from "../ModuleHeader/ModuleHeader";
 import UserContext from "../../../context/UserContext";

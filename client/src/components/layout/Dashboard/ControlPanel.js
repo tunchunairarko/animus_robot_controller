@@ -7,7 +7,7 @@ import RobotHead from "../../assets/pepper_head.png"
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack, prescriptionPriority, setPrescriptionPriority, setShowHelp, disableNavButtons, sonarData, paddingLeft, paddingRight, paddingTop, paddingBottom }) {
+export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack, prescriptionPriority, setPrescriptionPriority, setShowHelp, disableNavButtons, sonarData }) {
 
     const [prescriptionData, setPrescriptionData] = useState(
         [
@@ -116,25 +116,25 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                             }
                             {
                                 robotSensorImg == 1 ? (
-                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle at front. Please move backwards.</Tooltip>}>
+                                    
                                         <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665344/HWU_Telecare/robot-sensor-front_g0kq6u.png" />
-                                    </OverlayTrigger>
+                                    
 
                                 ) : (<div></div>)
                             }
                             {
                                 robotSensorImg == 2 ? (
-                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle at the back. Please don't move backwards.</Tooltip>}>
+                                    
                                         <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623665345/HWU_Telecare/robot-sensor-back_crcjwg.png" />
-                                    </OverlayTrigger>
+                                    
                                     
                                 ) : (<div></div>)
                             }
                             {
                                 robotSensorImg == 3 ? (
-                                    <OverlayTrigger placement="top" overlay={<Tooltip >Obstacle both at the front and back. Rotate the robot sideways and step aside</Tooltip>}>
+                                    
                                         <Image className="robot-sensor" fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623666163/HWU_Telecare/robot-sensor-both_kqvfts.png" />
-                                    </OverlayTrigger>
+                                    
                                     
                                 ) : (<div></div>)
                             }

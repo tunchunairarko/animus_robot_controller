@@ -19,9 +19,7 @@ const options = {
 ReactDOM.render(
     <CookiesProvider>
         <AlertProvider template={AlertTemplate} {...options}>
-            <React.StrictMode>
-                <App />
-            </React.StrictMode>
+            <App />
         </AlertProvider>
     </CookiesProvider>, document.querySelector("#root")
 
