@@ -7,7 +7,7 @@ import RobotHead from "../../assets/pepper_head.png"
 import { GiHeartOrgan, GiStabbedNote, GiAerialSignal } from "react-icons/gi";
 import { DropdownList, DatePicker } from "react-widgets";
 
-export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack, prescriptionPriority, setPrescriptionPriority, setShowHelp, disableNavButtons, sonarData }) {
+export default function ControlPanel({ keyboardNav,setKeyboardNav, setPrescriptionMsg, setPrescriptionType, prescriptionType, prescriptionSchedule, setPrescriptionSchedule, handleNewPrescription, setClickVal, barProgress, onPressureMeasurementClicked, onTempMeasurementClicked, onPulseMeasurementClicked, faceTrack, setFaceTrack, prescriptionPriority, setPrescriptionPriority, setShowHelp, disableNavButtons, sonarData }) {
 
     const [prescriptionData, setPrescriptionData] = useState(
         [
@@ -18,7 +18,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
         ]
     )
     const [robotSensorImg, setRobotSensorImg] = useState(0)
-
+   
     const [urgencyData, setUrgencyData] = useState(
         [
             { "item": "High" },
@@ -219,8 +219,10 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                 placement="top"
                                 trigger="click"
                                 key="prescribe"
+                                onToggle={(e) => setKeyboardNav(!keyboardNav)}
+                                // onHide={(e) => setKeyboardNav(true)}
                                 overlay={
-                                    <Popover id="prescribe" onEnter={(e) => setKeyboardNav(false)} onExit={(e) => setKeyboardNav(true)}>
+                                    <Popover id="prescribe"  >
                                         <Popover.Title as="h3">Send reminders to the robot</Popover.Title>
                                         <Popover.Content >
                                             <Col sm="12" className="mt-2">
@@ -256,7 +258,7 @@ export default function ControlPanel({ setKeyboardNav, setPrescriptionMsg, setPr
                                             <Col sm="12" className="mt-2">
                                                 <Form.Group controlId="prescriptionDetails">
                                                     <Form.Control
-                                                        placeholder="Enter prescription details"
+                                                        placeholder="Enter reminder details"
                                                         as="textarea"
                                                         rows={3}
                                                         onChange={(e) => setPrescriptionMsg(e.target.value)} />

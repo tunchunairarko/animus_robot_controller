@@ -38,7 +38,8 @@ export default function Register() {
         {"affiliation":"Therapist"},
         {"affiliation":"Logistic personnel"},
         {"affiliation":"IT support"},
-        {"affiliation":"Others (relatives,friends etc)"}
+        {"affiliation":"Others (relatives,friends etc)"},
+        {"affiliation":"Prefer not to say"},
     ]
 
     const [email, setEmail] = useState();
@@ -135,7 +136,7 @@ export default function Register() {
                         </Form.Row>
                         <Form.Row>
                             <Form.Group as={Col} controlId="set-affiliation">
-                                <Form.Label>Affiliation/relation</Form.Label>
+                                <Form.Label>Affiliation/relation (optional)</Form.Label>
                                 <DropdownList
                                     
                                     data={affiliationList}

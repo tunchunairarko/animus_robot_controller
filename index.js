@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("FACETRACKDATA", function (data) {
-    console.log(data)
+    // console.log(data)
     if (data === 0) {
       socket.broadcast.emit("TOFACETRACKDATA", false)
     }

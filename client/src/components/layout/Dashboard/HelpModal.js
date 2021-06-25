@@ -4,6 +4,8 @@ import "../../../components/assets/style.css"
 import { IoMdBody } from "react-icons/io";
 import { AiFillRobot } from "react-icons/ai";
 import { FiPhoneCall } from "react-icons/fi";
+import { RiFileHistoryFill } from "react-icons/ri";
+import { GiStabbedNote,GiSettingsKnobs,GiAerialSignal } from "react-icons/gi";
 import 'react-responsive-modal/styles.css';
 import { Modal } from 'react-responsive-modal';
 // const SearchModal = ({ show, handleClose, searchQuery, onProductChosen, marketplace }) => {
@@ -63,6 +65,94 @@ const HelpModal = ({ showHelp, setShowHelp }) => {
                             <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1623535355/HWU_Telecare/Instruction_screens-4_grqlha.jpg" />
 
                         </Col>
+                        <Col sm="12" id="helpsettingreminder" className="mt-3">
+
+                            <h5 className="helph5header">How to set up a reminder for the robot to remind</h5>
+                            <Row>
+                                <Col sm="6" className="center-content">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/reminder_button_jaqjjv.jpg" />
+                                </Col>
+                                <Col sm="6">
+                                    <p>
+                                        Click on the "Reminder" button
+                                    </p>
+                                </Col>
+                                <Col sm="12" className="center-content">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/reminder_instructions_hn6jmm.jpg" />
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col sm="12" id="helpmeasuringpulse" className="mt-3">
+
+                            <h5 className="helph5header">How to measure vital signs for routine checkups</h5>
+                            <Row>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/measure_pulse_mzu8p4.jpg" />
+                                </Col>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <p>
+                                        Click on the "Measure" button
+                                    </p>
+                                </Col>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/take_measurement_fadsw7.jpg" />
+                                </Col>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <p>
+                                        The vital measurement toolbox will popup. Currently HWU Telecare supports 3 types of measurements: pulse, temperature and blood pressure, and they don't require physical contact with the patient. Just click one of the options, and then you would have to wait for 5-9 seconds (the robot will freeze once you start a measurement).
+                                    </p>
+                                </Col>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/result_appears_at_the_bottom_iayidg.jpg" />
+                                </Col>
+                                <Col sm="6" className="center-content mt-2 mb-2">
+                                    <p>
+                                        Once its done, the result will pop up at the bottom of the screen like this.
+                                    </p>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col sm="12" id="helputilitybuttons" className="mt-3">
+                            <h5 className="helph5header">Some utility buttons</h5>
+                            <Row>
+                                <Col sm="6" className="center-content">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/refresh_button_brd66z.jpg" />
+                                </Col>
+                                <Col sm="6">
+                                    <p>
+                                        Use it to refresh your dashboard if things get stuck
+                                    </p>
+                                </Col>
+                                <Col sm="6" className="center-content">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/face_track_button_tw6n9j.jpg" />
+                                </Col>
+                                <Col sm="6">
+                                    <p>
+                                        You can tell the robot to track user's face while having conversation. The robot will try to look for the person with him and direct its eyes towards his/her/their face.
+                                    </p>
+                                </Col>
+                                <Col sm="6" className="center-content">
+                                    <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/logout-disconnect_button_kh0u1a.jpg" />
+                                </Col>
+                                <Col sm="6">
+                                    <p>
+                                        Disconnect your session and logout
+                                    </p>
+                                </Col>
+                            </Row>
+
+                        </Col>
+                        <Col sm="12" id="helpmedicalrecords" className="mt-3">
+                            <h5 className="helph5header">Check stored reminders and vital reading history</h5>
+                            <p className="mt-3">
+                                Scroll down to the bottom of your right hand screen to access history of reminders and vital readings.
+                            </p>
+                            <Col sm="12" className="center-content">
+                                <Image fluid={true} src="https://res.cloudinary.com/decipher-tech/image/upload/v1624529313/HWU_Telecare/doctor_widgets_osqs6v.jpg" />
+                            </Col>
+
+
+                        </Col>
                     </Row>
                     <Row className="mt-2">
                         <Col sm="12" className="center-content">
@@ -74,6 +164,19 @@ const HelpModal = ({ showHelp, setShowHelp }) => {
                             </OverlayTrigger>
                             <OverlayTrigger placement="top" overlay={<Tooltip >How to look around</Tooltip>}>
                                 <a className="btn btn-outline-primary ml-1 mr-1" href="#helpheadcontrols"><AiFillRobot /></a>
+                            </OverlayTrigger>
+
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to set reminder for the robot to remind</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helpsettingreminder"><GiStabbedNote /></a>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to measure vitals</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helpmeasuringpulse"><GiAerialSignal /></a>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to use some utilities</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helputilitybuttons"><GiSettingsKnobs /></a>
+                            </OverlayTrigger>
+                            <OverlayTrigger placement="top" overlay={<Tooltip >How to check remote user's records</Tooltip>}>
+                                <a className="btn btn-outline-primary ml-1 mr-1" href="#helpmedicalrecords"><RiFileHistoryFill /></a>
                             </OverlayTrigger>
                         </Col>
                     </Row>

@@ -20,17 +20,17 @@ export default function Admin() {
     const { userData } = useContext(UserContext);
     // const [collapsed] = useState(false);
     // const [toggled, setToggled] = useState(false);
-    // const history = useHistory();
+    const history = useHistory();
     
-    // useEffect(() => {
-    //     const checkIfUserExists = () => {
-    //         if (!userData.user) {
-    //             history.push("/login")
-    //         }
-    //     }
-    //     checkIfUserExists()
+    useEffect(() => {
+        const checkIfUserExists = () => {
+            if (!userData.user) {
+                history.push("/login")
+            }
+        }
+        checkIfUserExists()
 
-    // }, [])
+    }, [])
 
 
     return (
