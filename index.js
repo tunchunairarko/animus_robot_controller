@@ -130,6 +130,9 @@ io.on("connection", (socket) => {
   socket.on("PEPPERCONTEST", function (data) {
     console.log(data)
   })
+  socket.on("SENDWAVEHAND",function(data){
+    socket.broadcast.emit("RELAYWAVEHAND",data)
+  })
 
 });
 
