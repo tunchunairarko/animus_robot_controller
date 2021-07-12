@@ -187,6 +187,7 @@ export default function ControlPanel({ keyboardNav,setKeyboardNav, setPrescripti
                             <OverlayTrigger
                                 placement="top"
                                 trigger="click"
+                                rootClose
                                 key="takeMeasurement"
                                 overlay={
                                     <Popover id="takeMeasurement" >
@@ -219,6 +220,7 @@ export default function ControlPanel({ keyboardNav,setKeyboardNav, setPrescripti
                                 placement="top"
                                 trigger="click"
                                 key="prescribe"
+                                rootClose
                                 onToggle={(e) => setKeyboardNav(!keyboardNav)}
                                 // onHide={(e) => setKeyboardNav(true)}
                                 overlay={

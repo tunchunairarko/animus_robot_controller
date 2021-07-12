@@ -22,7 +22,7 @@ const socket = io();
 
 export default function Dashboard() {
     const isDesktopOrLaptop = useMediaQuery({
-        query: '(min-device-width: 1224px)'
+        query: '(min-device-width: 768px)'
     })
     const { userData } = useContext(UserContext);
     const history = useHistory()
@@ -112,7 +112,7 @@ export default function Dashboard() {
     socket.on("TOFACETRACKDATA", data => {
         //console.log(data)
         // setFaceTrackStatus(() => data)
-        if(data==0){
+        if(data===0){
             setFaceTrack(false)
         }
         else{
@@ -135,7 +135,7 @@ export default function Dashboard() {
 
     useEffect(() => {
         const sendKeySignal = () => {
-            if (clickVal != 0 && localStorage.getItem("roomsize") > 0) {
+            if (clickVal !== 0 && localStorage.getItem("roomsize") > 0) {
                 if(clickVal==="forward"){
                     if(sonarData.front>=0.50){
                         socket.emit("frontenddata", clickVal)
@@ -280,6 +280,12 @@ export default function Dashboard() {
     }, [upPress])
 
     useEffect(() => {
+        if (!downPress) {
+            socket.emit("frontenddata", "nullmotion")
+        }
+    }, [downPress])
+
+    useEffect(() => {
         if (!leftPress) {
             socket.emit("frontenddata", "nullmotion")
         }
@@ -305,29 +311,29 @@ export default function Dashboard() {
 
     ///////////////////////
     //////////////////////
-    useEffect(() => {
-        if (!headUpPress) {
-            socket.emit("frontenddata", "nullmotion")
-        }
-    }, [headUpPress])
+    // useEffect(() => {
+    //     if (!headUpPress) {
+    //         socket.emit("frontenddata", "nullmotion")
+    //     }
+    // }, [headUpPress])
 
-    useEffect(() => {
-        if (!headDownPress) {
-            socket.emit("frontenddata", "nullmotion")
-        }
-    }, [headDownPress])
+    // useEffect(() => {
+    //     if (!headDownPress) {
+    //         socket.emit("frontenddata", "nullmotion")
+    //     }
+    // }, [headDownPress])
 
-    useEffect(() => {
-        if (!headLeftPress) {
-            socket.emit("frontenddata", "nullmotion")
-        }
-    }, [headLeftPress])
+    // useEffect(() => {
+    //     if (!headLeftPress) {
+    //         socket.emit("frontenddata", "nullmotion")
+    //     }
+    // }, [headLeftPress])
 
-    useEffect(() => {
-        if (!headRightPress) {
-            socket.emit("frontenddata", "nullmotion")
-        }
-    }, [headRightPress])
+    // useEffect(() => {
+    //     if (!headRightPress) {
+    //         socket.emit("frontenddata", "nullmotion")
+    //     }
+    // }, [headRightPress])
 
 
 
@@ -590,7 +596,7 @@ export default function Dashboard() {
                                             <Image src={Offline} />
                                         )
                                     }                                     */}
-                                        <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
+                                        <iframe title="Teleconference widget" id="iframeTelecallContainer" ref={iframeContainer} src="https://videocall-hwu-telecare.herokuapp.com/" allow="geolocation; microphone; camera" />
                                     </ResponsiveEmbed>
                                 </div>
 
