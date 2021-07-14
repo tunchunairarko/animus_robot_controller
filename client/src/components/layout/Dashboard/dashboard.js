@@ -16,7 +16,7 @@ import ControlPanel from "./ControlPanel"
 import { useHistory } from "react-router-dom";
 import DoctorWidget from "./DoctorWidget"
 import HelpModal from './HelpModal';
-
+import ModuleHeader from '../ModuleHeader/ModuleHeader';
 const socket = io();
 
 
@@ -65,13 +65,13 @@ export default function Dashboard() {
 
     const [barProgress, setBarProgress] = useState(0)
     const [vitalData, setVitalData] = useState("")
-    const [disableNavButtons,setDisableNavButtons] = useState(false)
+    const [disableNavButtons, setDisableNavButtons] = useState(false)
 
     const alert = useAlert()
     const [errorNotice, setErrorNotice] = useState()
     const [successNotice, setSuccessNotice] = useState()
     const [sonarData, setSonarData] = useState({ "front": 500, "back": 500 })
-    
+
     const [showHelp, setShowHelp] = useState(false);
 
     const iframeContainer = useRef(null)
@@ -112,15 +112,15 @@ export default function Dashboard() {
     socket.on("TOFACETRACKDATA", data => {
         //console.log(data)
         // setFaceTrackStatus(() => data)
-        if(data===0){
+        if (data === 0) {
             setFaceTrack(false)
         }
-        else{
+        else {
             setFaceTrack(true)
         }
 
     })
-    socket.on("FPSDATA",data=>{
+    socket.on("FPSDATA", data => {
         console.log(data)
     })
 
@@ -136,13 +136,13 @@ export default function Dashboard() {
     useEffect(() => {
         const sendKeySignal = () => {
             if (clickVal !== 0 && localStorage.getItem("roomsize") > 0) {
-                if(clickVal==="forward"){
-                    if(sonarData.front>=0.50){
+                if (clickVal === "forward") {
+                    if (sonarData.front >= 0.50) {
                         socket.emit("frontenddata", clickVal)
                     }
                 }
-                else if(clickVal==="back"){
-                    if(sonarData.back>0.50){
+                else if (clickVal === "back") {
+                    if (sonarData.back > 0.50) {
                         socket.emit("frontenddata", clickVal)
                     }
                 }
@@ -176,7 +176,7 @@ export default function Dashboard() {
 
     useState(() => {
         const compMount = async () => {
-            setShowHelp(()=>false)
+            setShowHelp(() => false)
             setUserRobots(() => ["Pepper"])
 
             let token = localStorage.getItem("auth-token");
@@ -202,8 +202,8 @@ export default function Dashboard() {
                 )
                 var tempMeasurement = []
                 for (var i = 0; i < res.data.length; i++) {
-                    var item=res.data[i]
-                    item.id=i+1
+                    var item = res.data[i]
+                    item.id = i + 1
                     tempMeasurement.push(item)
                 }
                 setVitalHistory(() => tempMeasurement)
@@ -242,7 +242,7 @@ export default function Dashboard() {
             //         }
             //     }
             // }
-            
+
             // if (localStorage.getItem("roomsize") === 0) {
             //     var iframeItem = iframeContainer.current.contentWindow;
             //     // const roomsize=iframeItem.localStorage.getItem("roomsize")
@@ -371,17 +371,17 @@ export default function Dashboard() {
 
     const handleMovement = (data) => {
         if (keyboardNav && localStorage.getItem("roomsize") > 0) {
-            if(data=="forward"){
-                if(sonarData.front>0.50){
+            if (data == "forward") {
+                if (sonarData.front > 0.50) {
                     socket.emit("frontenddata", data)
-                }                
+                }
             }
-            else if(data=="back"){
-                if(sonarData.back>0.50){
+            else if (data == "back") {
+                if (sonarData.back > 0.50) {
                     socket.emit("frontenddata", data)
-                }                
+                }
             }
-            else{
+            else {
                 socket.emit("frontenddata", data)
             }
             // socket.emit("frontenddata", data)
@@ -391,7 +391,7 @@ export default function Dashboard() {
     const handlePrescribedTasks = async (data) => {
         var tempTasks = []
         for (var i = 0; i < data.length; i++) {
-           
+
             tempTasks.push(data[i])
         }
         setPrescribedTasks(tempTasks)
@@ -421,17 +421,17 @@ export default function Dashboard() {
     const handlePrescribedMeasurements = async (data) => {
         var tempMeasurements = []
         for (var i = 0; i < data.length; i++) {
-            var item=data[i]
-            item.id=i+1
+            var item = data[i]
+            item.id = i + 1
             tempMeasurements.push(item)
         }
         setVitalHistory(tempMeasurements)
     }
-    const handleNewMeasurement = async (type,data) => {
+    const handleNewMeasurement = async (type, data) => {
         try {
             let token = await validateToken();
             if (token !== 0) {
-                const body = { username: userData.user.username, patientname: "maurodragone", measurementDate:new Date().toLocaleDateString("en-GB"),measurementType:type,measurementData:data }
+                const body = { username: userData.user.username, patientname: "maurodragone", measurementDate: new Date().toLocaleDateString("en-GB"), measurementType: type, measurementData: data }
                 const res = await Axios.post("/api/telecare/measurement/new",
                     body,
                     { headers: { "x-auth-token": token } }
@@ -483,14 +483,14 @@ export default function Dashboard() {
             // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        
+
         setTimeout(() => {
             setBarProgress(0)
             var randTopPressureVal = Math.floor(115 + Math.random() * (125 - 115));
             var randBottomPressureVal = Math.floor(75 + Math.random() * (85 - 75));
-            setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal+" mmHg");
+            setVitalData(randTopPressureVal.toString() + "/" + randBottomPressureVal + " mmHg");
             setDisableNavButtons(false)
-            handleNewMeasurement("bp",{"top":randTopPressureVal,"bottom":randBottomPressureVal})
+            handleNewMeasurement("bp", { "top": randTopPressureVal, "bottom": randBottomPressureVal })
 
         }, (completionTime + 2) * 1000)
 
@@ -521,12 +521,12 @@ export default function Dashboard() {
             // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        
+
         setTimeout(() => {
             setBarProgress(0)
             var randTopPressureVal = Math.floor(75 + Math.random() * (85 - 75));
-            setVitalData(randTopPressureVal.toString() + "BPM");            
-            handleNewMeasurement("pulse",{"top":randTopPressureVal})
+            setVitalData(randTopPressureVal.toString() + "BPM");
+            handleNewMeasurement("pulse", { "top": randTopPressureVal })
             setDisableNavButtons(false)
         }, (completionTime + 2) * 1000)
 
@@ -557,89 +557,94 @@ export default function Dashboard() {
             // //console.log(t);
             setBarProgress(100);
         }, 1000 * (9))
-        
+
         setTimeout(() => {
             var randTopPressureVal = Math.floor(37 + Math.random() * (25 - 15),);
             setVitalData(randTopPressureVal.toString() + " °C");
             setBarProgress(0)
             setDisableNavButtons(false)
-            handleNewMeasurement("temperature",{"top":randTopPressureVal})
+            handleNewMeasurement("temperature", { "top": randTopPressureVal })
         }, (completionTime + 2) * 1000)
     }
-    
+
     return (
         <Fragment>
-            {userRobots ? <Fragment>
-                {upPress && handleMovement("forward")}
-                {leftPress && handleMovement("left")}
-                {downPress && handleMovement("back")}
-                {rightPress && handleMovement("right")}
-                {leftRotatePress && handleMovement("rotate_left")}
-                {rightRotatePress && handleMovement("rotate_right")}
+            <main style={{ overflow: "hidden" }}>
+                <div className="container-fluid main-body">
+                <ModuleHeader moduleName={"Dashboard"} />
+                    {userRobots ? <Fragment>
+                        {upPress && handleMovement("forward")}
+                        {leftPress && handleMovement("left")}
+                        {downPress && handleMovement("back")}
+                        {rightPress && handleMovement("right")}
+                        {leftRotatePress && handleMovement("rotate_left")}
+                        {rightRotatePress && handleMovement("rotate_right")}
 
-                {headUpPress && handleMovement("head_up")}
-                {headDownPress && handleMovement("head_down")}
-                {headLeftPress && handleMovement("head_left")}
-                {headRightPress && handleMovement("head_right")}
+                        {headUpPress && handleMovement("head_up")}
+                        {headDownPress && handleMovement("head_down")}
+                        {headLeftPress && handleMovement("head_left")}
+                        {headRightPress && handleMovement("head_right")}
 
 
-                {isDesktopOrLaptop ? (
-                    <Fragment>
-                        <Row>
-                            <Col md="8" className="pr-1" >
-                                <div >
-                                    <ResponsiveEmbed aspectRatio="16by9" >
-                                        {/* {
+                        {isDesktopOrLaptop ? (
+                            <Fragment>
+                                <Row>
+                                    <Col md="8" className="pr-1" >
+                                        <div >
+                                            <ResponsiveEmbed aspectRatio="16by9" >
+                                                {/* {
                                         localStorage.getItem("roomsize")>0? (
                                             <iframe title="kal" id="iframeTelecallContainer" ref={iframeContainer} src="https://hwu-telepresence-room.herokuapp.com/" allow="geolocation; microphone; camera" />
                                         ):(
                                             <Image src={Offline} />
                                         )
                                     }                                     */}
-                                        <iframe title="Teleconference widget" id="iframeTelecallContainer" ref={iframeContainer} src="https://videocall-hwu-telecare.herokuapp.com/" allow="geolocation; microphone; camera" />
-                                    </ResponsiveEmbed>
+                                                <iframe title="Teleconference widget" id="iframeTelecallContainer" ref={iframeContainer} src="https://videocall.isensetune.com/" allow="geolocation *; microphone *; camera *" />
+                                            </ResponsiveEmbed>
+                                        </div>
+
+                                    </Col>
+                                    <Col md="4" className="pl-1 scroll-column">
+
+                                        <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} disableNavButtons={disableNavButtons} sonarData={sonarData} socket={socket} />
+                                        {/* paddingBottom={paddingBottom} paddingTop={paddingTop} paddingRight={paddingRight} paddingLeft={paddingLeft} */}
+
+                                        <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
+                                    </Col>
+
+                                </Row>
+                                <HelpModal showHelp={showHelp} setShowHelp={setShowHelp} />
+                            </Fragment>
+
+                        ) : (
+                            <div class="no-robot-container">
+                                <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>
+                                    Device not supported
+                                </div>
+                                <div style={{ color: '#c0c0c0', fontSize: '2rem', textTransform: 'uppercase', fontWeight: '900' }}>
+                                    Please use a laptop/desktop to run this application
                                 </div>
 
-                            </Col>
-                            <Col md="4" className="pl-1 scroll-column">
+                            </div>
+                        )}
 
-                                <ControlPanel keyboardNav={keyboardNav} setKeyboardNav={setKeyboardNav} history={history} setPrescriptionMsg={setPrescriptionMsg} setPrescriptionType={setPrescriptionType} prescriptionType={prescriptionType} setPrescriptionSchedule={setPrescriptionSchedule} prescriptionSchedule={prescriptionSchedule} handleNewPrescription={handleNewPrescription} obstacleAv={obstacleAv} setObstacleAv={setObstacleAv} setClickVal={setClickVal} handleDisconnect={handleDisconnect} handleConnect={handleConnect} barProgress={barProgress} onPressureMeasurementClicked={onPressureMeasurementClicked} onTempMeasurementClicked={onTempMeasurementClicked} onPulseMeasurementClicked={onPulseMeasurementClicked} setFaceTrack={setFaceTrack} faceTrack={faceTrack} setPrescriptionPriority={setPrescriptionPriority} prescriptionPriority={prescriptionPriority} setShowHelp={setShowHelp} disableNavButtons={disableNavButtons} sonarData={sonarData} socket={socket}/>
-                                {/* paddingBottom={paddingBottom} paddingTop={paddingTop} paddingRight={paddingRight} paddingLeft={paddingLeft} */}
 
-                                <DoctorWidget prescribedTasks={prescribedTasks} vitalHistory={vitalHistory} />
-                            </Col>
-
-                        </Row>
-                        <HelpModal showHelp={showHelp} setShowHelp={setShowHelp}/>
                     </Fragment>
-
-                ) : (
-                    <div class="no-robot-container">
-                        <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>
-                            Device not supported
-                        </div>
-                        <div style={{ color: '#c0c0c0', fontSize: '2rem', textTransform: 'uppercase', fontWeight: '900' }}>
-                            Please use a laptop/desktop to run this application
-                        </div>
-
-                    </div>
-                )}
-
-
-            </Fragment>
-                :
-                <Fragment>
-                    <div class="no-robot-container">
-                        <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>
-                            No robots found
-                        </div>
-                        <div style={{ color: '#c0c0c0', fontSize: '2rem', textTransform: 'uppercase', fontWeight: '900' }}>
-                            Add robot
-                        </div>
-                        <Button className="mr-2 ml-2 mt-3"><FaPlusCircle /> Add a robot</Button>
-                    </div>
-                </Fragment>
-            }
+                        :
+                        <Fragment>
+                            <div class="no-robot-container">
+                                <div style={{ color: '#c0c0c0', fontSize: '4rem', textTransform: 'uppercase', fontWeight: '900' }}>
+                                    No robots found
+                                </div>
+                                <div style={{ color: '#c0c0c0', fontSize: '2rem', textTransform: 'uppercase', fontWeight: '900' }}>
+                                    Add robot
+                                </div>
+                                <Button className="mr-2 ml-2 mt-3"><FaPlusCircle /> Add a robot</Button>
+                            </div>
+                        </Fragment>
+                    }
+                </div>
+            </main>
         </Fragment>
     )
 }

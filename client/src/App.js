@@ -11,6 +11,7 @@ import { useCookies } from "react-cookie";
 
 import PrivateRoute from "./router/PrivateRoute";
 import PublicRoute from './router/PublicRoute';
+import Dashboard from './components/layout/Dashboard/dashboard';
 //"exact property fixes the issue of the Route component to skip looking for child paths"
 export default function App() {
     
@@ -114,7 +115,7 @@ export default function App() {
                     <Switch>
                         <PublicRoute restricted={true} component={Login} path="/login" exact />
                         <PublicRoute restricted={true} component={Register} path="/register" exact />
-                        <PrivateRoute component={Admin} path="/dashboard" strict/>
+                        <PrivateRoute component={Dashboard} path="/dashboard" strict/>
                         <PrivateRoute component={Admin} path="/settings" strict/>
                         <PrivateRoute component={Admin} path="/robots/add" strict/>
                         <PublicRoute restricted={true} component={Admin} path="/" exact />
